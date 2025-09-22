@@ -1,37 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- 元数据部分 - 对SEO和可访问性很重要 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charity Events - Home</title>
+    <meta name="description" content="Discover and participate in charity events to make a difference in your community">
+    <meta name="keywords" content="charity, events, fundraising, volunteer, donate">
+    <title>CharityEvents - Make a Difference Through Meaningful Events</title>
+    
+    <!-- CSS样式表 -->
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    
+    <!-- 网站图标 -->
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
 </head>
 <body>
-    <nav class="navbar" id="navbar">
-        <!-- 导航将通过JavaScript动态加载 -->
-    </nav>
+    <!-- 导航栏 -->
+    <header>
+        <nav class="navbar" role="navigation" aria-label="Main navigation">
+            <div class="nav-container">
+                <!-- 网站标志 -->
+                <a href="index.html" class="nav-logo" aria-label="CharityEvents Home">
+                    <span class="logo-icon">❤️</span>
+                    CharityEvents
+                </a>
+                
+                <!-- 导航菜单 -->
+                <ul class="nav-menu" role="menubar">
+                    <li class="nav-item" role="none">
+                        <a href="index.html" class="nav-link" role="menuitem" aria-current="page">Home</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="search.html" class="nav-link" role="menuitem">Search Events</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
 
-    <main class="container">
-        <section class="hero">
-            <h1>Welcome to Charity Events</h1>
-            <p>Making a difference, one event at a time</p>
+    <!-- 主内容区域 -->
+    <main class="main-content" role="main">
+        <!-- 英雄区域 -->
+        <section class="hero" aria-labelledby="hero-heading">
+            <div class="hero-content">
+                <h1 id="hero-heading">Make a Difference Through Charity Events</h1>
+                <p class="hero-subtitle">Join meaningful events that create positive change in our community</p>
+                <div class="hero-actions">
+                    <a href="#upcoming-events" class="btn btn-primary">View Upcoming Events</a>
+                    <a href="search.html" class="btn btn-secondary">Find Specific Events</a>
+                </div>
+            </div>
         </section>
 
-        <section class="organization-info">
-            <h2>About Our Mission</h2>
-            <p>We connect compassionate people with meaningful charity events to create positive change in our community.</p>
+        <!-- 组织信息区域 -->
+        <section class="organization-info" aria-labelledby="about-heading">
+            <div class="container">
+                <h2 id="about-heading" class="section-title">About Our Mission</h2>
+                <div class="mission-content">
+                    <div class="mission-text">
+                        <p>At CharityEvents, we believe that everyone can make a difference. We connect compassionate individuals and organizations with meaningful charity events that create lasting positive impact in our community.</p>
+                        <p>Since our founding, we've helped raise over <strong>$2 million</strong> for various causes and connected <strong>50,000+ participants</strong> with opportunities to give back.</p>
+                    </div>
+                    <div class="mission-stats">
+                        <div class="stat">
+                            <span class="stat-number">500+</span>
+                            <span class="stat-label">Events Hosted</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">$2M+</span>
+                            <span class="stat-label">Funds Raised</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">50K+</span>
+                            <span class="stat-label">Participants</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <section class="events-section">
-            <h2>Upcoming Events</h2>
-            <div id="events-container" class="events-grid">
-                <!-- 事件将通过JavaScript动态加载 -->
-                <div class="loading">Loading events...</div>
+        <!-- 动态活动列表区域 -->
+        <section id="upcoming-events" class="events-section" aria-labelledby="events-heading">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="events-heading" class="section-title">Upcoming Charity Events</h2>
+                    <p class="section-subtitle">Discover opportunities to make a difference</p>
+                </div>
+                
+                <!-- 加载状态 -->
+                <div id="loading-state" class="loading-state" aria-live="polite" aria-label="Loading events">
+                    <div class="loading-spinner"></div>
+                    <p>Loading upcoming events...</p>
+                </div>
+                
+                <!-- 错误状态 -->
+                <div id="error-state" class="error-state hidden" aria-live="assertive" role="alert">
+                    <div class="error-icon">⚠️</div>
+                    <h3>Unable to Load Events</h3>
+                    <p>We're having trouble loading the events. Please check your connection and try again.</p>
+                    <button id="retry-button" class="btn btn-primary">Retry</button>
+                </div>
+                
+                <!-- 空状态 -->
+                <div id="empty-state" class="empty-state hidden" aria-live="polite">
+                    <div class="empty-icon">📅</div>
+                    <h3>No Upcoming Events</h3>
+                    <p>There are no upcoming events at the moment. Please check back later.</p>
+                </div>
+                
+                <!-- 活动网格容器 -->
+                <div id="events-container" class="events-grid" aria-live="polite"></div>
             </div>
         </section>
     </main>
 
+    <!-- 页脚 -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>CharityEvents</h3>
+                    <p>Connecting people with meaningful charity opportunities since 2024.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p>Email: info@charityevents.org</p>
+                    <p>Phone: (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CharityEvents. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript文件 -->
+    <script src="js/api.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/navigation.js"></script>
     <script src="js/home.js"></script>
 </body>
 </html>

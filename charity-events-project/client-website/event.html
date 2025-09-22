@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details - CharityEvents</title>
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+</head>
+<body>
+    <header>
+        <nav class="navbar" role="navigation" aria-label="Main navigation">
+            <div class="nav-container">
+                <a href="index.html" class="nav-logo" aria-label="CharityEvents Home">
+                    <span class="logo-icon">❤️</span>
+                    CharityEvents
+                </a>
+                <ul class="nav-menu" role="menubar">
+                    <li class="nav-item" role="none">
+                        <a href="index.html" class="nav-link" role="menuitem">Home</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="search.html" class="nav-link" role="menuitem">Search Events</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content" role="main">
+        <!-- 加载状态 -->
+        <div id="event-loading" class="loading-state" aria-live="polite">
+            <div class="loading-spinner"></div>
+            <p>Loading event details...</p>
+        </div>
+
+        <!-- 错误状态 -->
+        <div id="event-error" class="error-state hidden" aria-live="assertive" role="alert">
+            <div class="error-icon">⚠️</div>
+            <h3>Event Not Found</h3>
+            <p>The event you're looking for doesn't exist or is no longer available.</p>
+            <a href="index.html" class="btn btn-primary">Back to Home</a>
+        </div>
+
+        <!-- 活动详情容器 -->
+        <div id="event-details" class="event-details-container hidden">
+            <!-- 内容将通过JavaScript动态加载 -->
+        </div>
+    </main>
+
+    <!-- 注册模态框 -->
+    <div id="register-modal" class="modal hidden" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+        <div class="modal-overlay" data-close-modal></div>
+        <div class="modal-content">
+            <button class="modal-close" data-close-modal aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h2 id="modal-title">Registration</h2>
+            </div>
+            <div class="modal-body">
+                <div class="under-construction">
+                    <div class="construction-icon">🚧</div>
+                    <h3>Feature Under Construction</h3>
+                    <p>This feature is currently under construction and will be available soon.</p>
+                    <p>In the meantime, please contact us directly for event registration.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-close-modal>OK</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer" role="contentinfo">
+        <!-- 与首页相同的页脚 -->
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/event.js"></script>
+</body>
+</html>

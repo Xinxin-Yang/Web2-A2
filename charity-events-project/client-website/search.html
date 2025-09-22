@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Search for charity events by date, location, and category">
+    <title>Search Charity Events - Find Your Perfect Volunteering Opportunity</title>
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+</head>
+<body>
+    <header>
+        <nav class="navbar" role="navigation" aria-label="Main navigation">
+            <div class="nav-container">
+                <a href="index.html" class="nav-logo" aria-label="CharityEvents Home">
+                    <span class="logo-icon">❤️</span>
+                    CharityEvents
+                </a>
+                <ul class="nav-menu" role="menubar">
+                    <li class="nav-item" role="none">
+                        <a href="index.html" class="nav-link" role="menuitem">Home</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="search.html" class="nav-link" role="menuitem" aria-current="page">Search Events</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content" role="main">
+        <!-- 搜索区域 -->
+        <section class="search-section" aria-labelledby="search-heading">
+            <div class="container">
+                <div class="search-header">
+                    <h1 id="search-heading" class="section-title">Find Charity Events</h1>
+                    <p class="section-subtitle">Use the filters below to discover events that match your interests</p>
+                </div>
+
+                <!-- 搜索表单 -->
+                <form id="search-form" class="search-form" role="search" aria-label="Search events">
+                    <div class="form-grid">
+                        <!-- 日期筛选 -->
+                        <div class="form-group">
+                            <label for="date-filter" class="form-label">Date</label>
+                            <input 
+                                type="date" 
+                                id="date-filter" 
+                                name="date"
+                                aria-describedby="date-help"
+                                class="form-input"
+                            >
+                            <small id="date-help" class="form-help">Filter events by specific date</small>
+                        </div>
+
+                        <!-- 地点筛选 -->
+                        <div class="form-group">
+                            <label for="location-filter" class="form-label">Location</label>
+                            <input 
+                                type="text" 
+                                id="location-filter" 
+                                name="location"
+                                placeholder="Enter city or venue..."
+                                aria-describedby="location-help"
+                                class="form-input"
+                            >
+                            <small id="location-help" class="form-help">Search by city, park, or venue name</small>
+                        </div>
+
+                        <!-- 分类筛选 -->
+                        <div class="form-group">
+                            <label for="category-filter" class="form-label">Category</label>
+                            <select 
+                                id="category-filter" 
+                                name="category"
+                                aria-describedby="category-help"
+                                class="form-select"
+                            >
+                                <option value="">All Categories</option>
+                                <!-- 分类将通过JavaScript动态加载 -->
+                            </select>
+                            <small id="category-help" class="form-help">Choose a specific event type</small>
+                        </div>
+                    </div>
+
+                    <!-- 表单按钮 -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="search-button">
+                            <span class="btn-text">Search Events</span>
+                            <span class="btn-loading hidden">Searching...</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="clear-filters">
+                            Clear Filters
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- 搜索结果区域 -->
+        <section class="results-section" aria-labelledby="results-heading">
+            <div class="container">
+                <div class="results-header">
+                    <h2 id="results-heading" class="section-title">Search Results</h2>
+                    <div id="results-summary" class="results-summary" aria-live="polite"></div>
+                </div>
+
+                <!-- 加载状态 -->
+                <div id="search-loading" class="loading-state hidden" aria-live="polite">
+                    <div class="loading-spinner"></div>
+                    <p>Searching for events...</p>
+                </div>
+
+                <!-- 错误状态 -->
+                <div id="search-error" class="error-state hidden" aria-live="assertive" role="alert">
+                    <div class="error-icon">⚠️</div>
+                    <h3>Search Failed</h3>
+                    <p id="search-error-message">We encountered an error while searching. Please try again.</p>
+                    <button id="search-retry" class="btn btn-primary">Try Again</button>
+                </div>
+
+                <!-- 空结果状态 -->
+                <div id="no-results" class="empty-state hidden" aria-live="polite">
+                    <div class="empty-icon">🔍</div>
+                    <h3>No Events Found</h3>
+                    <p>No events match your current filters. Try adjusting your search criteria.</p>
+                    <button id="reset-search" class="btn btn-primary">Reset Filters</button>
+                </div>
+
+                <!-- 搜索结果容器 -->
+                <div id="search-results" class="events-grid" aria-live="polite"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <!-- 与首页相同的页脚 -->
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/search.js"></script>
+</body>
+</html>
