@@ -5,7 +5,7 @@ require('dotenv').config();
 const connection = mysql.createConnection({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '', // 这里需要你的MySQL密码
+    password: process.env.DB_PASSWORD || 'yxx860818.', // 这里需要你的MySQL密码
     database: process.env.DB_NAME || 'charityevents_db',
     port: process.env.DB_PORT || 3306,
     charset: 'utf8mb4'
