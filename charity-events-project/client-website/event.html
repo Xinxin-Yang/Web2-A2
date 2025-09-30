@@ -9,6 +9,252 @@
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+    
+    <style>
+        .hidden { display: none !important; }
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 详情页特定样式 */
+        .event-details-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .event-header {
+            background: linear-gradient(135deg, #2c3e50, #1a252f);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .event-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .event-category-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .event-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .event-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .event-meta-item {
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .meta-label {
+            display: block;
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .meta-value {
+            display: block;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .event-description {
+            margin-bottom: 2rem;
+        }
+        
+        .event-description h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .fundraising-progress {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            margin-bottom: 2rem;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 50px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #f39c12);
+            border-radius: 50px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .event-actions {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            position: relative;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 1001;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 50%;
+        }
+        
+        .modal-header {
+            padding: 1.5rem 1.5rem 0;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 0 1.5rem 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        
+        .under-construction {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .construction-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 767px) {
+            .event-details-container {
+                padding: 1rem;
+            }
+            
+            .event-header {
+                padding: 2rem 1rem;
+            }
+            
+            .event-title {
+                font-size: 1.75rem;
+            }
+            
+            .event-content {
+                padding: 1.5rem;
+            }
+            
+            .event-meta-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .event-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -32,7 +278,7 @@
 
     <main class="main-content" role="main">
         <!-- 加载状态 -->
-        <div id="event-loading" class="loading-state" aria-live="polite">
+        <div id="event-loading" class="loading-state">
             <div class="loading-spinner"></div>
             <p>Loading event details...</p>
         </div>
@@ -41,7 +287,7 @@
         <div id="event-error" class="error-state hidden" aria-live="assertive" role="alert">
             <div class="error-icon">⚠️</div>
             <h3>Event Not Found</h3>
-            <p>The event you're looking for doesn't exist or is no longer available.</p>
+            <p id="event-error-message">The event you're looking for doesn't exist or is no longer available.</p>
             <a href="index.html" class="btn btn-primary">Back to Home</a>
         </div>
 
@@ -52,7 +298,7 @@
     </main>
 
     <!-- 注册模态框 -->
-    <div id="register-modal" class="modal hidden" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+    <div id="register-modal" class="modal hidden">
         <div class="modal-overlay" data-close-modal></div>
         <div class="modal-content">
             <button class="modal-close" data-close-modal aria-label="Close modal">&times;</button>
@@ -74,12 +320,279 @@
     </div>
 
     <footer class="footer" role="contentinfo">
-        <!-- 与首页相同的页脚 -->
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>CharityEvents</h3>
+                    <p>Connecting people with meaningful charity opportunities since 2024.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="search.html">Search Events</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <div class="contact-info">
+                        <p>📧 Email: <a href="mailto:info@charityevents.org">info@charityevents.org</a></p>
+                        <p>📞 Phone: <a href="tel:+15551234567">(555) 123-4567</a></p>
+                        <p>📍 Address: 123 Charity Street, Hope City</p>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook" class="social-link">📘 Facebook</a>
+                        <a href="#" aria-label="Twitter" class="social-link">🐦 Twitter</a>
+                        <a href="#" aria-label="Instagram" class="social-link">📷 Instagram</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CharityEvents. All rights reserved.</p>
+            </div>
+        </div>
     </footer>
 
-    <script src="js/api.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/navigation.js"></script>
-    <script src="js/event.js"></script>
+    <!-- 修复脚本 - 直接内联确保执行 -->
+    <script>
+        // 工具函数
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatCurrency(amount) {
+            if (!amount) return '$0.00';
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+
+        function formatDate(dateString) {
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return 'Invalid Date';
+            }
+        }
+
+        function calculateProgress(current, total) {
+            if (!total || total === 0) return 0;
+            return Math.min(100, Math.round((current / total) * 100));
+        }
+
+        // 从URL获取事件ID
+        function getEventIdFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const eventId = urlParams.get('id');
+            
+            console.log('🔗 Event ID from URL:', eventId);
+            
+            if (!eventId || isNaN(Number(eventId))) {
+                console.error('❌ Invalid event ID:', eventId);
+                return null;
+            }
+            
+            return parseInt(eventId);
+        }
+
+        // 显示事件详情
+        function displayEventDetails(event) {
+            console.log('🎨 Displaying event details:', event);
+            
+            const container = document.getElementById('event-details');
+            const loading = document.getElementById('event-loading');
+            const error = document.getElementById('event-error');
+            
+            // 隐藏其他状态
+            if (loading) loading.classList.add('hidden');
+            if (error) error.classList.add('hidden');
+            
+            // 显示详情容器
+            if (container) {
+                container.classList.remove('hidden');
+                
+                const formattedDate = formatDate(event.date_time);
+                const formattedPrice = event.ticket_price > 0 ? formatCurrency(event.ticket_price) : 'Free';
+                const progressPercentage = calculateProgress(event.current_amount, event.goal_amount);
+                
+                const eventHTML = `
+                    <article class="event-detail">
+                        <header class="event-header">
+                            <h1 class="event-title">${escapeHtml(event.name)}</h1>
+                            <span class="event-category-badge">${escapeHtml(event.category_name)}</span>
+                        </header>
+                        
+                        <div class="event-content">
+                            <div class="event-meta-grid">
+                                <div class="event-meta-item">
+                                    <span class="meta-label">Date & Time</span>
+                                    <span class="meta-value">
+                                        <time datetime="${event.date_time}">${formattedDate}</time>
+                                    </span>
+                                </div>
+                                
+                                <div class="event-meta-item">
+                                    <span class="meta-label">Location</span>
+                                    <span class="meta-value">${escapeHtml(event.location)}</span>
+                                </div>
+                                
+                                <div class="event-meta-item">
+                                    <span class="meta-label">Ticket Price</span>
+                                    <span class="meta-value">${formattedPrice}</span>
+                                </div>
+                                
+                                ${event.max_attendees ? `
+                                <div class="event-meta-item">
+                                    <span class="meta-label">Capacity</span>
+                                    <span class="meta-value">${event.max_attendees} attendees</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="event-description">
+                                <h2>About This Event</h2>
+                                <p>${escapeHtml(event.full_description || event.short_description)}</p>
+                            </div>
+                            
+                            ${event.address ? `
+                            <div class="event-venue">
+                                <h3>Venue Details</h3>
+                                <p>${escapeHtml(event.address)}</p>
+                            </div>
+                            ` : ''}
+                            
+                            ${event.goal_amount > 0 ? `
+                            <div class="fundraising-progress">
+                                <h3>Fundraising Progress</h3>
+                                <div class="progress-bar" role="progressbar" 
+                                     aria-valuenow="${progressPercentage}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                                </div>
+                                <div class="progress-text">
+                                    <span>${formatCurrency(event.current_amount)} raised</span>
+                                    <span>${formatCurrency(event.goal_amount)} goal</span>
+                                    <span>${progressPercentage}%</span>
+                                </div>
+                            </div>
+                            ` : ''}
+                            
+                            <div class="event-actions">
+                                <button id="register-button" class="btn btn-primary btn-large">
+                                    Register for This Event
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                `;
+                
+                container.innerHTML = eventHTML;
+                
+                // 设置注册按钮事件
+                const registerButton = document.getElementById('register-button');
+                if (registerButton) {
+                    registerButton.addEventListener('click', openModal);
+                }
+            }
+        }
+
+        function showEventError(message) {
+            const loading = document.getElementById('event-loading');
+            const error = document.getElementById('event-error');
+            
+            if (loading) loading.classList.add('hidden');
+            if (error) {
+                document.getElementById('event-error-message').textContent = message;
+                error.classList.remove('hidden');
+            }
+        }
+
+        // 加载事件详情
+        async function loadEventDetails(eventId) {
+            console.log('📥 Loading event details for ID:', eventId);
+            
+            try {
+                const response = await fetch(`http://localhost:3000/api/events/${eventId}`);
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('Event not found');
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ Event details:', data);
+                
+                if (data.success && data.data) {
+                    displayEventDetails(data.data);
+                } else {
+                    throw new Error('Event data not available');
+                }
+                
+            } catch (error) {
+                console.error('❌ Failed to load event details:', error);
+                showEventError(error.message);
+            }
+        }
+
+        // 模态框功能
+        function setupModal() {
+            const modal = document.getElementById('register-modal');
+            const closeButtons = document.querySelectorAll('[data-close-modal]');
+            
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                });
+            });
+            
+            // ESC键关闭
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+        function openModal() {
+            const modal = document.getElementById('register-modal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 Event page loaded');
+            
+            // 设置模态框
+            setupModal();
+            
+            // 获取事件ID并加载详情
+            const eventId = getEventIdFromURL();
+            if (eventId) {
+                loadEventDetails(eventId);
+            } else {
+                showEventError('Invalid event ID provided in URL');
+            }
+        });
+    </script>
 </body>
 </html>

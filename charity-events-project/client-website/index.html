@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- 元数据部分 - 对SEO和可访问性很重要 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Discover and participate in charity events to make a difference in your community">
@@ -15,6 +14,33 @@
     
     <!-- 网站图标 -->
     <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+    
+    <style>
+        .hidden { display: none !important; }
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 修复backdrop-filter兼容性 */
+        .modal-overlay {
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+        .navbar.scrolled {
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+    </style>
 </head>
 <body>
     <!-- 导航栏 -->
@@ -90,7 +116,7 @@
                 </div>
                 
                 <!-- 加载状态 -->
-                <div id="loading-state" class="loading-state" aria-live="polite" aria-label="Loading events">
+                <div id="loading-state" class="loading-state">
                     <div class="loading-spinner"></div>
                     <p>Loading upcoming events...</p>
                 </div>
@@ -99,19 +125,19 @@
                 <div id="error-state" class="error-state hidden" aria-live="assertive" role="alert">
                     <div class="error-icon">⚠️</div>
                     <h3>Unable to Load Events</h3>
-                    <p>We're having trouble loading the events. Please check your connection and try again.</p>
-                    <button id="retry-button" class="btn btn-primary">Retry</button>
+                    <p id="error-message">We're having trouble loading the events. Please check your connection and try again.</p>
+                    <button id="retry-button" class="btn btn-primary" onclick="retryLoading()">Retry</button>
                 </div>
                 
                 <!-- 空状态 -->
-                <div id="empty-state" class="empty-state hidden" aria-live="polite">
+                <div id="empty-state" class="empty-state hidden">
                     <div class="empty-icon">📅</div>
                     <h3>No Upcoming Events</h3>
-                    <p>There are no upcoming events at the moment. Please check back later.</p>
+                    <p>There are no upcoming events at the moment. Please check back later for new opportunities to make a difference.</p>
                 </div>
                 
                 <!-- 活动网格容器 -->
-                <div id="events-container" class="events-grid" aria-live="polite"></div>
+                <div id="events-container" class="events-grid hidden"></div>
             </div>
         </section>
     </main>
@@ -125,9 +151,27 @@
                     <p>Connecting people with meaningful charity opportunities since 2024.</p>
                 </div>
                 <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="search.html">Search Events</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
                     <h4>Contact Us</h4>
-                    <p>Email: info@charityevents.org</p>
-                    <p>Phone: (555) 123-4567</p>
+                    <div class="contact-info">
+                        <p>📧 Email: <a href="mailto:info@charityevents.org">info@charityevents.org</a></p>
+                        <p>📞 Phone: <a href="tel:+15551234567">(555) 123-4567</a></p>
+                        <p>📍 Address: 123 Charity Street, Hope City</p>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook" class="social-link">📘 Facebook</a>
+                        <a href="#" aria-label="Twitter" class="social-link">🐦 Twitter</a>
+                        <a href="#" aria-label="Instagram" class="social-link">📷 Instagram</a>
+                    </div>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -136,10 +180,163 @@
         </div>
     </footer>
 
-    <!-- JavaScript文件 -->
-    <script src="js/api.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/navigation.js"></script>
-    <script src="js/home.js"></script>
+    <!-- 修复脚本 - 直接内联确保执行 -->
+    <script>
+        // 工具函数
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatCurrency(amount) {
+            if (!amount) return '$0.00';
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+
+        function formatDate(dateString) {
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return 'Invalid Date';
+            }
+        }
+
+        function calculateProgress(current, total) {
+            if (!total || total === 0) return 0;
+            return Math.min(100, Math.round((current / total) * 100));
+        }
+
+        // 显示活动数据
+        function displayEvents(events) {
+            console.log('🎨 Displaying events:', events);
+            
+            const container = document.getElementById('events-container');
+            const loading = document.getElementById('loading-state');
+            const error = document.getElementById('error-state');
+            const empty = document.getElementById('empty-state');
+            
+            // 隐藏其他状态
+            if (loading) loading.classList.add('hidden');
+            if (error) error.classList.add('hidden');
+            if (empty) empty.classList.add('hidden');
+            
+            // 显示容器
+            if (container) {
+                container.classList.remove('hidden');
+                
+                // 生成活动卡片HTML
+                const eventsHTML = events.map(event => `
+                    <div class="event-card">
+                        <div class="event-card-header">
+                            <span class="event-category">${escapeHtml(event.category_name || 'Uncategorized')}</span>
+                            <span class="event-price">${formatCurrency(event.ticket_price)}</span>
+                        </div>
+                        
+                        <h3 class="event-title">${escapeHtml(event.name)}</h3>
+                        
+                        <div class="event-meta">
+                            <div class="event-date">
+                                <span class="meta-icon">📅</span>
+                                <time>${formatDate(event.date_time)}</time>
+                            </div>
+                            
+                            <div class="event-location">
+                                <span class="meta-icon">📍</span>
+                                <span>${escapeHtml(event.location)}</span>
+                            </div>
+                        </div>
+                        
+                        <p class="event-description">${escapeHtml(event.short_description)}</p>
+                        
+                        ${event.goal_amount > 0 ? `
+                        <div class="fundraising-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${calculateProgress(event.current_amount, event.goal_amount)}%"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>${formatCurrency(event.current_amount)} raised</span>
+                                <span>${calculateProgress(event.current_amount, event.goal_amount)}%</span>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        <div class="event-actions">
+                            <button class="view-details-btn" onclick="window.location.href='event.html?id=${event.id}'">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                container.innerHTML = eventsHTML;
+            }
+        }
+
+        function showNoEvents() {
+            const loading = document.getElementById('loading-state');
+            const empty = document.getElementById('empty-state');
+            
+            if (loading) loading.classList.add('hidden');
+            if (empty) empty.classList.remove('hidden');
+        }
+
+        function showConnectionError() {
+            const loading = document.getElementById('loading-state');
+            const error = document.getElementById('error-state');
+            
+            if (loading) loading.classList.add('hidden');
+            if (error) error.classList.remove('hidden');
+        }
+
+        // 重试加载函数
+        function retryLoading() {
+            console.log('🔄 Retrying...');
+            loadEvents();
+        }
+
+        // 主要加载函数
+        async function loadEvents() {
+            console.log('🚀 Loading events from API...');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/events');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ API response:', data);
+                
+                if (data.success && data.data && data.data.length > 0) {
+                    displayEvents(data.data);
+                } else {
+                    showNoEvents();
+                }
+                
+            } catch (error) {
+                console.error('❌ Failed to load events:', error);
+                showConnectionError();
+            }
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏠 Home page loaded - starting event loading...');
+            loadEvents();
+        });
+    </script>
 </body>
 </html>
