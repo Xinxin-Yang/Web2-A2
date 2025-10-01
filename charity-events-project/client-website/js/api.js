@@ -29,6 +29,20 @@ class CharityEventsAPI {
         console.log('🔧 CharityEventsAPI initialized', { baseURL: this.baseURL });
     }
 
+        // 添加一个测试连接的方法
+    async testConnection() {
+        try {
+            console.log('🔌 Testing API connection...');
+            const response = await fetch('http://localhost:3000/health');
+            const data = await response.json();
+            console.log('✅ API connection test:', data);
+            return true;
+        } catch (error) {
+            console.error('❌ API connection test failed:', error);
+            return false;
+        }
+    }
+
     /**
      * 通用请求方法
      * @param {string} endpoint - API端点
@@ -182,6 +196,10 @@ class CharityEventsAPI {
      * @param {number} id - 活动ID
      * @returns {Promise<Object>} 活动对象
      */
+    
+    /**
+     * 根据ID获取单个活动 - 修复版本
+     */
     async fetchEventById(id) {
         // 参数验证
         if (!id || isNaN(Number(id))) {
@@ -190,15 +208,30 @@ class CharityEventsAPI {
 
         try {
             console.log(`📥 Fetching event with ID: ${id}`);
-            const event = await this._makeRequestWithRetry(`/events/${id}`);
             
-            // 数据验证
-            const validatedEvent = this._validateEventData(event);
+            // 使用正确的端点
+            const response = await this._makeRequestWithRetry(`/events/${id}`);
+            
+            // 处理响应格式
+            const eventData = response.data || response;
+            
+            if (!eventData) {
+                throw new Error('Event data not found in response');
+            }
+            
+            // 数据验证和转换
+            const validatedEvent = this._validateEventData(eventData);
             console.log(`✅ Successfully fetched event: ${validatedEvent.name}`);
             
             return validatedEvent;
+            
         } catch (error) {
             console.error(`❌ Failed to fetch event ${id}:`, error);
+            
+            // 提供更详细的错误信息
+            if (error.message.includes('404')) {
+                throw new Error(`Event with ID ${id} not found`);
+            }
             throw error;
         }
     }
@@ -211,6 +244,9 @@ class CharityEventsAPI {
      * @param {string} filters.category - 分类筛选
      * @returns {Promise<Array>} 搜索结果数组
      */
+    /**
+     * 搜索活动
+     */
     async searchEvents(filters = {}) {
         try {
             console.log('🔍 Searching events with filters:', filters);
@@ -218,29 +254,30 @@ class CharityEventsAPI {
             // 构建查询参数
             const params = new URLSearchParams();
             
-            // 添加有效的筛选条件
-            if (filters.date && this._isValidDate(filters.date)) {
+            if (filters.date) {
                 params.append('date', filters.date);
             }
             
-            if (filters.location && filters.location.trim()) {
-                params.append('location', filters.location.trim());
+            if (filters.location) {
+                params.append('location', filters.location);
             }
             
-            if (filters.category && !isNaN(Number(filters.category))) {
+            if (filters.category) {
                 params.append('category', filters.category);
             }
             
             const queryString = params.toString();
-            const endpoint = queryString ? `/events/search?${queryString}` : '/events/search';
             
-            const events = await this._makeRequestWithRetry(endpoint);
+            // 使用简化的搜索端点
+            const endpoint = `/events/search?${queryString}`;
             
-            // 数据验证
-            const validatedEvents = this._validateEventsData(events);
-            console.log(`✅ Search found ${validatedEvents.length} events`);
+            console.log('🔍 Making search request to:', endpoint);
             
-            return validatedEvents;
+            const response = await this._makeRequestWithRetry(endpoint);
+            
+            // 返回数据
+            return response.data || response;
+            
         } catch (error) {
             console.error('❌ Failed to search events:', error);
             throw error;

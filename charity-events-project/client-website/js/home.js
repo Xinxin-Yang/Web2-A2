@@ -663,6 +663,14 @@ class HomePage {
         const formattedPrice = Utils.formatCurrency(event.ticket_price);
         const progressPercentage = Utils.calculateProgress(event.current_amount, event.goal_amount);
         
+        const viewDetailsBtn = `
+            <button class="view-details-btn" 
+                    onclick="window.location.href='event.html?id=${event.id}'"
+                    aria-label="View details for ${Utils.escapeHtml(event.name)}">
+                View Details
+            </button>
+        `;
+
         return `
             <div class="event-card" role="listitem" data-event-id="${event.id}" data-index="${index}">
                 <div class="event-card-header">

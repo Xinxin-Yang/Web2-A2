@@ -242,13 +242,27 @@ class EventPage {
     /**
      * 从URL获取事件ID
      */
+    /**
+     * 从URL获取事件ID - 修复版本
+     */
     _getEventIdFromURL() {
+        // 方法1: 从查询参数获取
         const urlParams = new URLSearchParams(window.location.search);
-        const eventId = urlParams.get('id');
+        let eventId = urlParams.get('id');
+        
+        // 方法2: 从URL路径获取 (备用方案)
+        if (!eventId) {
+            const pathParts = window.location.pathname.split('/');
+            const fileName = pathParts[pathParts.length - 1];
+            if (fileName === 'event.html' && pathParts.length > 2) {
+                eventId = pathParts[pathParts.length - 2];
+            }
+        }
         
         console.log('🔗 Event ID from URL:', eventId);
         
         if (!eventId || isNaN(Number(eventId))) {
+            console.error('❌ Invalid event ID:', eventId);
             return null;
         }
         
