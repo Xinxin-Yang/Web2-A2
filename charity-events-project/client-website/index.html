@@ -30,16 +30,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
-        /* 修复backdrop-filter兼容性 */
-        .modal-overlay {
-            -webkit-backdrop-filter: blur(4px);
-            backdrop-filter: blur(4px);
-        }
-        .navbar.scrolled {
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-        }
     </style>
 </head>
 <body>
@@ -49,7 +39,10 @@
             <div class="nav-container">
                 <!-- 网站标志 -->
                 <a href="index.html" class="nav-logo" aria-label="CharityEvents Home">
-                    <span class="logo-icon">❤️</span>
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 28C16 28 3 19 3 11C3 7 6 4 10 4C13 4 16 6 16 6C16 6 19 4 22 4C26 4 29 7 29 11C29 19 16 28 16 28Z" 
+                              fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+                    </svg>
                     CharityEvents
                 </a>
                 
@@ -71,11 +64,27 @@
         <!-- 英雄区域 -->
         <section class="hero" aria-labelledby="hero-heading">
             <div class="hero-content">
+                <div class="hero-icon">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 35C20 35 5 25 5 15C5 10 10 5 15 5C18 5 20 8 20 8C20 8 22 5 25 5C30 5 35 10 35 15C35 25 20 35 20 35Z" 
+                              fill="white" stroke="white" stroke-width="2"/>
+                    </svg>
+                </div>
                 <h1 id="hero-heading">Make a Difference Through Charity Events</h1>
                 <p class="hero-subtitle">Join meaningful events that create positive change in our community</p>
                 <div class="hero-actions">
-                    <a href="#upcoming-events" class="btn btn-primary">View Upcoming Events</a>
-                    <a href="search.html" class="btn btn-secondary">Find Specific Events</a>
+                    <a href="#upcoming-events" class="btn btn-primary">
+                        <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M14 2H6a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2zM6 4h8v12H6V4zm1 3h6v1H7V7zm0 3h6v1H7v-1zm0 3h4v1H7v-1z"/>
+                        </svg>
+                        View Upcoming Events
+                    </a>
+                    <a href="search.html" class="btn btn-secondary">
+                        <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"/>
+                        </svg>
+                        Find Specific Events
+                    </a>
                 </div>
             </div>
         </section>
@@ -91,14 +100,17 @@
                     </div>
                     <div class="mission-stats">
                         <div class="stat">
+                            <div class="stat-icon">📅</div>
                             <span class="stat-number">500+</span>
                             <span class="stat-label">Events Hosted</span>
                         </div>
                         <div class="stat">
+                            <div class="stat-icon">💰</div>
                             <span class="stat-number">$2M+</span>
                             <span class="stat-label">Funds Raised</span>
                         </div>
                         <div class="stat">
+                            <div class="stat-icon">👥</div>
                             <span class="stat-number">50K+</span>
                             <span class="stat-label">Participants</span>
                         </div>
@@ -160,17 +172,47 @@
                 <div class="footer-section">
                     <h4>Contact Us</h4>
                     <div class="contact-info">
-                        <p>📧 Email: <a href="mailto:info@charityevents.org">info@charityevents.org</a></p>
-                        <p>📞 Phone: <a href="tel:+15551234567">(555) 123-4567</a></p>
-                        <p>📍 Address: 123 Charity Street, Hope City</p>
+                        <p>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="margin-right: 8px;">
+                                <path d="M14 2H2a1 1 0 00-1 1v10a1 1 0 001 1h12a1 1 0 001-1V3a1 1 0 00-1-1zM2 3h12v.867L8 8.233 2 3.867V3zm0 1.8V13h12V4.8L8 9.767 2 4.8z"/>
+                            </svg>
+                            Email: <a href="mailto:info@charityevents.org">info@charityevents.org</a>
+                        </p>
+                        <p>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="margin-right: 8px;">
+                                <path d="M3.654 1.328a.5.5 0 00-.654.654l1.5 4.5a.5.5 0 00.654.354l4.5-1.5a.5.5 0 00.354-.654l-1.5-4.5a.5.5 0 00-.654-.354l-4.5 1.5z"/>
+                            </svg>
+                            Phone: <a href="tel:+15551234567">(555) 123-4567</a>
+                        </p>
+                        <p>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="margin-right: 8px;">
+                                <path d="M8 16s6-5.686 6-10A6 6 0 002 6c0 4.314 6 10 6 10zm0-7a3 3 0 110-6 3 3 0 010 6z"/>
+                            </svg>
+                            Address: 123 Charity Street, Hope City
+                        </p>
                     </div>
                 </div>
                 <div class="footer-section">
                     <h4>Follow Us</h4>
                     <div class="social-links">
-                        <a href="#" aria-label="Facebook" class="social-link">📘 Facebook</a>
-                        <a href="#" aria-label="Twitter" class="social-link">🐦 Twitter</a>
-                        <a href="#" aria-label="Instagram" class="social-link">📷 Instagram</a>
+                        <a href="#" aria-label="Facebook" class="social-link">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 8px;">
+                                <path d="M18 10a8 8 0 10-9 7.93V12H7V10h2V8a3 3 0 013-3h2v2h-2a1 1 0 00-1 1v2h3v2h-3v5.93A8 8 0 0018 10z"/>
+                            </svg>
+                            Facebook
+                        </a>
+                        <a href="#" aria-label="Twitter" class="social-link">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 8px;">
+                                <path d="M6.29 18c2.2 0 3.4-1.83 3.4-3.42V9.5h2.04l.27-2.73H9.69V5.57c0-.79.39-1.56 1.63-1.56h1.26V1.64h-2.02c-2.37 0-3.9 1.45-3.9 4.1v2.03H4.75v2.73h2.04v5.08c0 1.89-1.02 3.42-2.5 3.42z"/>
+                            </svg>
+                            Twitter
+                        </a>
+                        <a href="#" aria-label="Instagram" class="social-link">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 8px;">
+                                <path d="M10 2a8 8 0 00-8 8 8 8 0 008 8 8 8 0 008-8 8 8 0 00-8-8zm0 14a6 6 0 110-12 6 6 0 010 12zm4-10a1 1 0 100-2 1 1 0 000 2z"/>
+                            </svg>
+                            Instagram
+                        </a>
                     </div>
                 </div>
             </div>
@@ -219,6 +261,32 @@
             return Math.min(100, Math.round((current / total) * 100));
         }
 
+        // 获取事件类型对应的CSS类
+        function getEventTypeClass(categoryName) {
+            const typeMap = {
+                'Fun Run': 'run',
+                'Gala Dinner': 'gala', 
+                'Silent Auction': 'auction',
+                'Concert': 'concert',
+                'Workshop': 'workshop',
+                'Sports Tournament': 'sports'
+            };
+            return typeMap[categoryName] || 'run';
+        }
+
+        // 获取事件类型对应的图标文本
+        function getEventIcon(categoryName) {
+            const iconMap = {
+                'Fun Run': '🏃',
+                'Gala Dinner': '🍽️',
+                'Silent Auction': '🎨',
+                'Concert': '🎵',
+                'Workshop': '🔧',
+                'Sports Tournament': '⚽'
+            };
+            return iconMap[categoryName] || '📅';
+        }
+
         // 显示活动数据
         function displayEvents(events) {
             console.log('🎨 Displaying events:', events);
@@ -238,48 +306,59 @@
                 container.classList.remove('hidden');
                 
                 // 生成活动卡片HTML
-                const eventsHTML = events.map(event => `
-                    <div class="event-card">
-                        <div class="event-card-header">
-                            <span class="event-category">${escapeHtml(event.category_name || 'Uncategorized')}</span>
-                            <span class="event-price">${formatCurrency(event.ticket_price)}</span>
-                        </div>
-                        
-                        <h3 class="event-title">${escapeHtml(event.name)}</h3>
-                        
-                        <div class="event-meta">
-                            <div class="event-date">
-                                <span class="meta-icon">📅</span>
-                                <time>${formatDate(event.date_time)}</time>
+                const eventsHTML = events.map(event => {
+                    const eventType = getEventTypeClass(event.category_name);
+                    const eventIcon = getEventIcon(event.category_name);
+                    
+                    return `
+                        <div class="event-card">
+                            <div class="event-image ${eventType}" aria-label="${event.category_name} event">
+                                <div style="font-size: 48px; margin-bottom: 8px;">${eventIcon}</div>
+                                <div>${escapeHtml(event.category_name)}</div>
                             </div>
-                            
-                            <div class="event-location">
-                                <span class="meta-icon">📍</span>
-                                <span>${escapeHtml(event.location)}</span>
+                            <div class="event-card-content">
+                                <div class="event-card-header">
+                                    <span class="event-category ${eventType}">${escapeHtml(event.category_name || 'Uncategorized')}</span>
+                                    <span class="event-price">${formatCurrency(event.ticket_price)}</span>
+                                </div>
+                                
+                                <h3 class="event-title">${escapeHtml(event.name)}</h3>
+                                
+                                <div class="event-meta">
+                                    <div class="event-date">
+                                        <span class="meta-icon">📅</span>
+                                        <time>${formatDate(event.date_time)}</time>
+                                    </div>
+                                    
+                                    <div class="event-location">
+                                        <span class="meta-icon">📍</span>
+                                        <span>${escapeHtml(event.location)}</span>
+                                    </div>
+                                </div>
+                                
+                                <p class="event-description">${escapeHtml(event.short_description)}</p>
+                                
+                                ${event.goal_amount > 0 ? `
+                                <div class="fundraising-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: ${calculateProgress(event.current_amount, event.goal_amount)}%"></div>
+                                    </div>
+                                    <div class="progress-text">
+                                        <span>${formatCurrency(event.current_amount)} raised</span>
+                                        <span>${calculateProgress(event.current_amount, event.goal_amount)}%</span>
+                                    </div>
+                                </div>
+                                ` : ''}
+                                
+                                <div class="event-actions">
+                                    <button class="view-details-btn" onclick="window.location.href='event.html?id=${event.id}'">
+                                        View Details
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        
-                        <p class="event-description">${escapeHtml(event.short_description)}</p>
-                        
-                        ${event.goal_amount > 0 ? `
-                        <div class="fundraising-progress">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${calculateProgress(event.current_amount, event.goal_amount)}%"></div>
-                            </div>
-                            <div class="progress-text">
-                                <span>${formatCurrency(event.current_amount)} raised</span>
-                                <span>${calculateProgress(event.current_amount, event.goal_amount)}%</span>
-                            </div>
-                        </div>
-                        ` : ''}
-                        
-                        <div class="event-actions">
-                            <button class="view-details-btn" onclick="window.location.href='event.html?id=${event.id}'">
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
                 
                 container.innerHTML = eventsHTML;
             }

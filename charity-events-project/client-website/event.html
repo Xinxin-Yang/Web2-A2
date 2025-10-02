@@ -26,59 +26,122 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* 详情页特定样式 */
+        /* 详情页特定样式 - 增强版 */
         .event-details-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 2rem 1rem;
         }
         
-        .event-header {
-            background: linear-gradient(135deg, #2c3e50, #1a252f);
+        .event-hero {
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 3rem 2rem;
+            padding: 4rem 2rem;
             text-align: center;
-            border-radius: 12px 12px 0 0;
+            border-radius: 20px 20px 0 0;
+            overflow: hidden;
+        }
+        
+        .event-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+        
+        .event-hero-content {
+            position: relative;
+            z-index: 2;
         }
         
         .event-title {
-            font-size: 2.5rem;
-            font-weight: bold;
+            font-size: 3rem;
+            font-weight: 800;
             margin-bottom: 1rem;
             color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            line-height: 1.1;
         }
         
         .event-category-badge {
             display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
             color: white;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.5rem;
             border-radius: 50px;
-            font-size: 0.875rem;
+            font-size: 1rem;
             font-weight: 600;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 1rem;
+        }
+        
+        .event-hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .hero-stat {
+            text-align: center;
+            background: rgba(255,255,255,0.15);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .hero-stat-number {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .hero-stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
         }
         
         .event-content {
             background: white;
-            padding: 2rem;
-            border-radius: 0 0 12px 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 3rem 2rem;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
         
         .event-meta-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
+            margin-bottom: 3rem;
         }
         
         .event-meta-item {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #3498db;
             text-align: center;
-            padding: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .event-meta-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .meta-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
         }
         
         .meta-label {
@@ -86,73 +149,170 @@
             font-size: 0.875rem;
             color: #6c757d;
             margin-bottom: 0.5rem;
-            font-weight: 500;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .meta-value {
             display: block;
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #495057;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #2c3e50;
+            line-height: 1.3;
         }
         
         .event-description {
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #27ae60;
         }
         
         .event-description h2 {
             color: #2c3e50;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .event-description h2::before {
+            content: '📖';
             font-size: 1.5rem;
         }
         
+        .event-description p {
+            line-height: 1.8;
+            color: #495057;
+            font-size: 1.1rem;
+        }
+        
+        .event-venue {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .event-venue h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .event-venue h3::before {
+            content: '📍';
+        }
+        
         .fundraising-progress {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            border: 2px solid #e9ecef;
-            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .fundraising-progress h3 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .fundraising-progress h3::before {
+            content: '💰';
         }
         
         .progress-bar {
             width: 100%;
-            height: 12px;
-            background: #e9ecef;
+            height: 20px;
+            background: rgba(255,255,255,0.8);
             border-radius: 50px;
             overflow: hidden;
-            margin: 1rem 0;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #27ae60, #f39c12);
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
             border-radius: 50px;
-            transition: width 0.5s ease;
+            transition: width 1s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
         
         .progress-text {
             display: flex;
             justify-content: space-between;
-            font-size: 0.875rem;
-            color: #6c757d;
-            font-weight: 500;
+            font-size: 1rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .progress-percentage {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #27ae60;
         }
         
         .event-actions {
             text-align: center;
-            padding: 1.5rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
+            padding: 2.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            color: white;
+        }
+        
+        .event-actions h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
         }
         
         .btn-large {
-            padding: 1rem 2rem;
-            font-size: 1.125rem;
-            font-weight: 600;
+            padding: 1.25rem 3rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
         
-        /* 模态框样式 */
+        .btn-large:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        /* 模态框样式 - 增强版 */
         .modal {
             position: fixed;
             top: 0;
@@ -164,6 +324,14 @@
             align-items: center;
             justify-content: center;
             padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
         }
         
         .modal-overlay {
@@ -172,87 +340,164 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            -webkit-backdrop-filter: blur(4px);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.7);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
         }
         
         .modal-content {
             position: relative;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
             max-width: 500px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             z-index: 1001;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal.active .modal-content {
+            transform: scale(1);
         }
         
         .modal-close {
             position: absolute;
             top: 1rem;
             right: 1rem;
-            background: none;
+            background: rgba(0,0,0,0.1);
             border: none;
             font-size: 1.5rem;
             color: #6c757d;
             cursor: pointer;
-            padding: 0.25rem;
+            padding: 0.5rem;
             border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            background: rgba(0,0,0,0.2);
+            color: #495057;
         }
         
         .modal-header {
-            padding: 1.5rem 1.5rem 0;
+            padding: 2rem 2rem 1rem;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.75rem;
         }
         
         .modal-body {
-            padding: 1.5rem;
+            padding: 2rem;
         }
         
         .modal-footer {
-            padding: 0 1.5rem 1.5rem;
+            padding: 0 2rem 2rem;
             display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
+            justify-content: center;
         }
         
         .under-construction {
             text-align: center;
-            padding: 2rem;
+            padding: 2rem 0;
         }
         
         .construction-icon {
-            font-size: 3rem;
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .under-construction h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .under-construction p {
+            color: #6c757d;
+            line-height: 1.6;
             margin-bottom: 1rem;
         }
         
+        /* 响应式设计 */
         @media (max-width: 767px) {
             .event-details-container {
                 padding: 1rem;
             }
             
-            .event-header {
-                padding: 2rem 1rem;
+            .event-hero {
+                padding: 3rem 1rem;
             }
             
             .event-title {
-                font-size: 1.75rem;
+                font-size: 2rem;
             }
             
             .event-content {
-                padding: 1.5rem;
+                padding: 2rem 1rem;
             }
             
             .event-meta-grid {
                 grid-template-columns: 1fr;
                 gap: 1rem;
-                padding: 1rem;
             }
             
-            .event-actions {
-                flex-direction: column;
+            .event-hero-stats {
+                gap: 1rem;
             }
+            
+            .hero-stat {
+                padding: 0.75rem 1rem;
+            }
+            
+            .event-description,
+            .event-venue,
+            .fundraising-progress {
+                padding: 1.5rem;
+            }
+            
+            .modal-content {
+                margin: 1rem;
+            }
+        }
+        
+        /* 动画效果 */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
         }
     </style>
 </head>
@@ -303,18 +548,19 @@
         <div class="modal-content">
             <button class="modal-close" data-close-modal aria-label="Close modal">&times;</button>
             <div class="modal-header">
-                <h2 id="modal-title">Registration</h2>
+                <h2 id="modal-title">Event Registration</h2>
             </div>
             <div class="modal-body">
                 <div class="under-construction">
                     <div class="construction-icon">🚧</div>
-                    <h3>Feature Under Construction</h3>
-                    <p>This feature is currently under construction and will be available soon.</p>
-                    <p>In the meantime, please contact us directly for event registration.</p>
+                    <h3>Registration Coming Soon!</h3>
+                    <p>We're working hard to bring you a seamless registration experience. This feature will be available in our next update.</p>
+                    <p>In the meantime, please contact us directly at <strong>register@charityevents.org</strong> for event registration and inquiries.</p>
+                    <p>Thank you for your interest in making a difference!</p>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" data-close-modal>OK</button>
+                <button class="btn btn-primary" data-close-modal>Got It!</button>
             </div>
         </div>
     </div>
@@ -356,7 +602,7 @@
         </div>
     </footer>
 
-    <!-- 修复脚本 - 直接内联确保执行 -->
+    <!-- 修复脚本 - 增强版 -->
     <script>
         // 工具函数
         function escapeHtml(text) {
@@ -410,7 +656,7 @@
             return parseInt(eventId);
         }
 
-        // 显示事件详情
+        // 显示事件详情 - 增强版
         function displayEventDetails(event) {
             console.log('🎨 Displaying event details:', event);
             
@@ -429,55 +675,88 @@
                 const formattedDate = formatDate(event.date_time);
                 const formattedPrice = event.ticket_price > 0 ? formatCurrency(event.ticket_price) : 'Free';
                 const progressPercentage = calculateProgress(event.current_amount, event.goal_amount);
+                const remainingGoal = event.goal_amount - event.current_amount;
                 
                 const eventHTML = `
-                    <article class="event-detail">
-                        <header class="event-header">
-                            <h1 class="event-title">${escapeHtml(event.name)}</h1>
-                            <span class="event-category-badge">${escapeHtml(event.category_name)}</span>
-                        </header>
+                    <article class="event-detail fade-in">
+                        <!-- 英雄区域 -->
+                        <section class="event-hero">
+                            <div class="event-hero-content">
+                                <span class="event-category-badge">${escapeHtml(event.category_name)}</span>
+                                <h1 class="event-title">${escapeHtml(event.name)}</h1>
+                                <p class="hero-subtitle">${escapeHtml(event.short_description)}</p>
+                                
+                                <div class="event-hero-stats">
+                                    <div class="hero-stat">
+                                        <span class="hero-stat-number">${formattedPrice}</span>
+                                        <span class="hero-stat-label">Ticket Price</span>
+                                    </div>
+                                    ${event.max_attendees ? `
+                                    <div class="hero-stat">
+                                        <span class="hero-stat-number">${event.max_attendees}</span>
+                                        <span class="hero-stat-label">Max Attendees</span>
+                                    </div>
+                                    ` : ''}
+                                    ${event.goal_amount > 0 ? `
+                                    <div class="hero-stat">
+                                        <span class="hero-stat-number">${progressPercentage}%</span>
+                                        <span class="hero-stat-label">Funded</span>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </section>
                         
+                        <!-- 主要内容 -->
                         <div class="event-content">
+                            <!-- 基本信息网格 -->
                             <div class="event-meta-grid">
-                                <div class="event-meta-item">
+                                <div class="event-meta-item slide-in">
+                                    <span class="meta-icon">📅</span>
                                     <span class="meta-label">Date & Time</span>
                                     <span class="meta-value">
                                         <time datetime="${event.date_time}">${formattedDate}</time>
                                     </span>
                                 </div>
                                 
-                                <div class="event-meta-item">
+                                <div class="event-meta-item slide-in" style="animation-delay: 0.1s">
+                                    <span class="meta-icon">📍</span>
                                     <span class="meta-label">Location</span>
                                     <span class="meta-value">${escapeHtml(event.location)}</span>
                                 </div>
                                 
-                                <div class="event-meta-item">
-                                    <span class="meta-label">Ticket Price</span>
-                                    <span class="meta-value">${formattedPrice}</span>
+                                <div class="event-meta-item slide-in" style="animation-delay: 0.2s">
+                                    <span class="meta-icon">🎫</span>
+                                    <span class="meta-label">Ticket Type</span>
+                                    <span class="meta-value">${event.ticket_type === 'paid' ? 'Paid Entry' : 'Free Event'}</span>
                                 </div>
                                 
                                 ${event.max_attendees ? `
-                                <div class="event-meta-item">
+                                <div class="event-meta-item slide-in" style="animation-delay: 0.3s">
+                                    <span class="meta-icon">👥</span>
                                     <span class="meta-label">Capacity</span>
-                                    <span class="meta-value">${event.max_attendees} attendees</span>
+                                    <span class="meta-value">${event.max_attendees} People</span>
                                 </div>
                                 ` : ''}
                             </div>
                             
-                            <div class="event-description">
+                            <!-- 活动描述 -->
+                            <section class="event-description slide-in" style="animation-delay: 0.4s">
                                 <h2>About This Event</h2>
                                 <p>${escapeHtml(event.full_description || event.short_description)}</p>
-                            </div>
+                            </section>
                             
+                            <!-- 场地信息 -->
                             ${event.address ? `
-                            <div class="event-venue">
+                            <section class="event-venue slide-in" style="animation-delay: 0.5s">
                                 <h3>Venue Details</h3>
                                 <p>${escapeHtml(event.address)}</p>
-                            </div>
+                            </section>
                             ` : ''}
                             
+                            <!-- 筹款进度 -->
                             ${event.goal_amount > 0 ? `
-                            <div class="fundraising-progress">
+                            <section class="fundraising-progress slide-in" style="animation-delay: 0.6s">
                                 <h3>Fundraising Progress</h3>
                                 <div class="progress-bar" role="progressbar" 
                                      aria-valuenow="${progressPercentage}" 
@@ -487,17 +766,31 @@
                                 </div>
                                 <div class="progress-text">
                                     <span>${formatCurrency(event.current_amount)} raised</span>
+                                    <span class="progress-percentage">${progressPercentage}%</span>
                                     <span>${formatCurrency(event.goal_amount)} goal</span>
-                                    <span>${progressPercentage}%</span>
                                 </div>
-                            </div>
+                                ${remainingGoal > 0 ? `
+                                <p style="text-align: center; margin-top: 1rem; color: #495057;">
+                                    Only <strong>${formatCurrency(remainingGoal)}</strong> needed to reach our goal!
+                                </p>
+                                ` : `
+                                <p style="text-align: center; margin-top: 1rem; color: #27ae60; font-weight: 600;">
+                                    🎉 Goal achieved! Thank you for your support!
+                                </p>
+                                `}
+                            </section>
                             ` : ''}
                             
-                            <div class="event-actions">
-                                <button id="register-button" class="btn btn-primary btn-large">
-                                    Register for This Event
+                            <!-- 行动按钮 -->
+                            <section class="event-actions slide-in" style="animation-delay: 0.7s">
+                                <h3>Ready to Make a Difference?</h3>
+                                <button id="register-button" class="btn btn-large">
+                                    Register Now - ${formattedPrice}
                                 </button>
-                            </div>
+                                <p style="margin-top: 1rem; opacity: 0.9; font-size: 0.9rem;">
+                                    All proceeds support meaningful causes in our community
+                                </p>
+                            </section>
                         </div>
                     </article>
                 `;
@@ -509,6 +802,14 @@
                 if (registerButton) {
                     registerButton.addEventListener('click', openModal);
                 }
+                
+                // 添加滚动动画
+                setTimeout(() => {
+                    const animatedElements = container.querySelectorAll('.slide-in');
+                    animatedElements.forEach((element, index) => {
+                        element.style.animationDelay = `${index * 0.1}s`;
+                    });
+                }, 100);
             }
         }
 
@@ -551,39 +852,57 @@
             }
         }
 
-        // 模态框功能
+        // 模态框功能 - 增强版
         function setupModal() {
             const modal = document.getElementById('register-modal');
             const closeButtons = document.querySelectorAll('[data-close-modal]');
             
-            closeButtons.forEach(button => {
-                button.addEventListener('click', () => {
+            function closeModal() {
+                modal.classList.remove('active');
+                setTimeout(() => {
                     modal.classList.add('hidden');
-                    document.body.style.overflow = '';
-                });
+                }, 300);
+                document.body.style.overflow = '';
+            }
+            
+            function openModal() {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.add('active');
+                }, 10);
+                document.body.style.overflow = 'hidden';
+            }
+            
+            closeButtons.forEach(button => {
+                button.addEventListener('click', closeModal);
             });
             
             // ESC键关闭
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-                    modal.classList.add('hidden');
-                    document.body.style.overflow = '';
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    closeModal();
                 }
             });
+            
+            // 点击背景关闭
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+            
+            return { openModal, closeModal };
         }
 
-        function openModal() {
-            const modal = document.getElementById('register-modal');
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
+        let modalFunctions;
 
         // 页面加载完成后执行
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📄 Event page loaded');
             
             // 设置模态框
-            setupModal();
+            modalFunctions = setupModal();
+            window.openModal = modalFunctions.openModal;
             
             // 获取事件ID并加载详情
             const eventId = getEventIdFromURL();

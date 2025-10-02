@@ -10,7 +10,6 @@
 
 .navbar.scrolled {
     background: rgba(255, 255, 255, 0.95);
-    /* 添加webkit前缀支持Safari */
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     box-shadow: var(--shadow-md);
@@ -580,7 +579,6 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    /* 添加webkit前缀支持Safari */
     -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
 }
@@ -641,7 +639,6 @@
     margin-bottom: var(--space-4);
 }
 
-/* ===== 页脚组件 ===== */
 /* ===== 页脚组件 ===== */
 .footer {
     background: var(--primary-dark);
@@ -743,19 +740,354 @@
     text-decoration: underline;
 }
 
-/* 响应式页脚 */
+/* ===== 增强的图片和视觉效果 ===== */
+.hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%);
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(1deg); }
+}
+
+/* 事件卡片图片容器 */
+.event-image {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: var(--font-semibold);
+    font-size: var(--text-lg);
+    text-align: center;
+    padding: var(--space-4);
+}
+
+/* 不同类型事件的背景渐变 */
+.event-image.run {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+.event-image.gala {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+.event-image.auction {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+.event-image.concert {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+.event-image.workshop {
+    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+.event-image.sports {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* 图标样式增强 */
+.hero-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--space-6);
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* 按钮图标 */
+.btn-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: var(--space-2);
+}
+
+/* 统计图标 */
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-4);
+    color: white;
+    font-size: var(--text-xl);
+    box-shadow: var(--shadow-md);
+}
+
+/* 分类标签颜色 */
+.event-category.run { background: var(--info-color); color: white; }
+.event-category.gala { background: var(--primary-color); color: white; }
+.event-category.auction { background: var(--warning-color); color: white; }
+.event-category.concert { background: var(--secondary-color); color: white; }
+.event-category.workshop { background: var(--success-color); color: white; }
+.event-category.sports { background: var(--accent-color); color: white; }
+
+/* 组织信息区域背景 */
+.organization-info {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    position: relative;
+}
+
+.organization-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-light), var(--secondary-color));
+}
+
+/* 页脚背景 */
+.footer {
+    background: linear-gradient(135deg, var(--primary-dark), #1a252f);
+    position: relative;
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-light), var(--accent-color));
+}
+
+/* ===== 增强的图片和视觉效果 ===== */
+
+/* 英雄区域背景 */
+.hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%);
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(1deg); }
+}
+
+/* 事件卡片图片容器 */
+.event-image {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: var(--font-semibold);
+    font-size: var(--text-lg);
+    text-align: center;
+    padding: var(--space-4);
+}
+
+/* 不同类型事件的背景渐变 */
+.event-image.run {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+.event-image.gala {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+.event-image.auction {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+.event-image.concert {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+.event-image.workshop {
+    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+.event-image.sports {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* 图标样式增强 */
+.hero-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--space-6);
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* 按钮图标 */
+.btn-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: var(--space-2);
+}
+
+/* 统计图标 */
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-4);
+    color: white;
+    font-size: var(--text-xl);
+    box-shadow: var(--shadow-md);
+}
+
+/* 分类标签颜色 */
+.event-category.run { background: var(--info-color); color: white; }
+.event-category.gala { background: var(--primary-color); color: white; }
+.event-category.auction { background: var(--warning-color); color: white; }
+.event-category.concert { background: var(--secondary-color); color: white; }
+.event-category.workshop { background: var(--success-color); color: white; }
+.event-category.sports { background: var(--accent-color); color: white; }
+
+/* 组织信息区域背景 */
+.organization-info {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    position: relative;
+}
+
+.organization-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-light), var(--secondary-color));
+}
+
+/* 页脚背景 */
+.footer {
+    background: linear-gradient(135deg, var(--primary-dark), #1a252f);
+    position: relative;
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-light), var(--accent-color));
+}
+
+/* 响应式调整 */
 @media (max-width: 767px) {
-    .footer-content {
-        grid-template-columns: 1fr;
-        gap: var(--space-6);
-        text-align: center;
+    .event-image {
+        height: 150px;
+        font-size: var(--text-base);
     }
     
-    .footer-section {
-        padding: 0 var(--space-4);
+    .hero-icon {
+        width: 60px;
+        height: 60px;
     }
     
-    .social-links {
-        align-items: center;
+    .stat-icon {
+        width: 50px;
+        height: 50px;
     }
 }
