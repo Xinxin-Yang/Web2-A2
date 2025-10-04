@@ -17,16 +17,26 @@ function formatCurrency(amount) {
 }
 
 // 修复日期显示问题 - 增强版日期格式化函数
+
+// 工具函数
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function formatCurrency(amount) {
+    if (!amount) return '$0.00';
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    }).format(amount);
+}
+
 function formatDate(dateString) {
     try {
-        // 处理不同格式的日期字符串
         const date = new Date(dateString);
-        
-        // 检查日期是否有效
-        if (isNaN(date.getTime())) {
-            return 'Invalid Date';
-        }
-        
         return date.toLocaleDateString('en-US', {
             weekday: 'short',
             year: 'numeric',
@@ -36,7 +46,6 @@ function formatDate(dateString) {
             minute: '2-digit'
         });
     } catch (e) {
-        console.error('Error formatting date:', e, 'for date string:', dateString);
         return 'Invalid Date';
     }
 }
@@ -49,64 +58,30 @@ function calculateProgress(current, total) {
 // 状态管理
 let categories = [];
 
-// 加载分类数据 - 修复下拉框不显示问题
+// 加载分类数据
 async function loadCategories() {
     try {
         console.log('📥 Loading categories...');
         const response = await fetch('http://localhost:3000/api/categories');
-        
-        // 检查响应状态
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
         const data = await response.json();
         
-        if (data.success && data.data && data.data.length > 0) {
+        if (data.success && data.data) {
             categories = data.data;
             populateCategoryFilter();
-        } else {
-            // 如果API返回空数据，使用备用分类列表
-            console.warn('No categories from API, using fallback categories');
-            useFallbackCategories();
         }
     } catch (error) {
         console.error('❌ Failed to load categories:', error);
-        // 加载失败时使用备用分类列表
-        useFallbackCategories();
     }
 }
 
-// 备用分类数据 - 确保下拉框有内容
-function useFallbackCategories() {
-    categories = [
-        { id: 1, name: 'Fun Run' },
-        { id: 2, name: 'Gala Dinner' },
-        { id: 3, name: 'Silent Auction' },
-        { id: 4, name: 'Concert' },
-        { id: 5, name: 'Workshop' },
-        { id: 6, name: 'Sports Tournament' }
-    ];
-    populateCategoryFilter();
-}
-
-// 填充分类筛选器 - 修复下拉框不显示问题
+// 填充分类筛选器
 function populateCategoryFilter() {
     const categoryFilter = document.getElementById('category-filter');
-    if (!categoryFilter) {
-        console.error('❌ Category filter element not found');
-        return;
-    }
-    
-    if (categories.length > 0) {
+    if (categoryFilter && categories.length > 0) {
         const optionsHTML = categories.map(category => 
             `<option value="${category.id}">${escapeHtml(category.name)}</option>`
         ).join('');
         categoryFilter.innerHTML = '<option value="">All Categories</option>' + optionsHTML;
-    } else {
-        // 如果没有分类数据，显示提示
-        categoryFilter.innerHTML = '<option value="">No categories available</option>';
-        categoryFilter.disabled = true;
     }
 }
 
@@ -373,20 +348,6 @@ function clearFilters() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🔍 Search page loaded');
     
-    // 检查必要的DOM元素是否存在
-    const requiredElements = [
-        'date-filter', 
-        'category-filter',
-        'search-form',
-        'search-results'
-    ];
-    
-    requiredElements.forEach(id => {
-        if (!document.getElementById(id)) {
-            console.error(`❌ Required element with ID "${id}" not found`);
-        }
-    });
-    
     // 加载分类数据
     loadCategories();
     
@@ -429,3 +390,4 @@ document.addEventListener('DOMContentLoaded', function() {
         resetButton.addEventListener('click', clearFilters);
     }
 });
+
