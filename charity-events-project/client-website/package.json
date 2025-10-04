@@ -1,0 +1,28 @@
+{
+  "name": "charity-events-client",
+  "version": "1.0.0",
+  "description": "Client website for charity events management system",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "serve": "node server.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "charity",
+    "events",
+    "client",
+    "website",
+    "development-server"
+  ],
+  "author": "Xinxin Yang",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Xinxin-Yang/Web2-A2"
+  }
+}

@@ -1,760 +1,33 @@
-/**
- * 搜索页管理类
- * 处理事件搜索、筛选和结果展示
- * 展示复杂的客户端交互和API集成
- */
-class SearchPage {
-    /**
-     * 构造函数 - 初始化搜索页管理器
-     */
-    constructor() {
-        // 页面配置
-        this.config = {
-            // 搜索配置
-            search: {
-                debounceDelay: 300,
-                minSearchLength: 2,
-                maxResults: 100
-            },
-            
-            // 筛选配置
-            filters: {
-                dateFormat: 'YYYY-MM-DD',
-                locationMaxLength: 50
-            },
-            
-            // UI配置
-            ui: {
-                resultsPerPage: 12,
-                animationDuration: 300,
-                highlightSearchTerms: true
-            }
-        };
-        
-        // 状态管理
-        this.state = {
-            events: [],
-            filteredEvents: [],
-            categories: [],
-            searchResults: [],
-            isLoading: false,
-            isSearching: false,
-            hasSearched: false,
-            hasError: false,
-            errorMessage: '',
-            currentFilters: {
-                date: '',
-                location: '',
-                category: ''
-            },
-            searchQuery: '',
-            currentPage: 1,
-            totalPages: 1,
-            sortBy: 'relevance',
-            sortOrder: 'desc'
-        };
-        
-        // DOM元素引用
-        this.elements = {
-            // 表单元素
-            searchForm: null,
-            dateFilter: null,
-            locationFilter: null,
-            categoryFilter: null,
-            searchButton: null,
-            clearButton: null,
-            
-            // 结果元素
-            resultsContainer: null,
-            resultsSummary: null,
-            searchResults: null,
-            noResults: null,
-            
-            // 状态元素
-            searchLoading: null,
-            searchError: null,
-            
-            // 控制元素
-            sortSelect: null,
-            viewToggle: null
-        };
-        
-        // API实例
-        this.api = window.charityEventsAPI;
-        
-        // 事件监听器引用
-        this.eventListeners = [];
-        
-        // 搜索历史
-        this.searchHistory = [];
-        
-        console.log('🔍 SearchPage initialized', { 
-            config: this.config,
-            hasAPI: !!this.api
-        });
-    }
+// 整合了原main.js中的通用功能和search.js的搜索功能
 
-    /**
-     * 初始化搜索页
-     */
-    async init() {
-        try {
-            console.log('🚀 Initializing search page...');
-            
-            // 等待依赖项
-            await this._waitForDependencies();
-            
-            this._cacheElements();
-            this._validateDOMStructure();
-            this._setupEventListeners();
-            await this._loadInitialData();
-            this._setupSearchHistory();
-            this._restoreSearchState();
-            
-            console.log('✅ Search page initialized successfully');
-            
-            this._dispatchEvent('searchpage:ready', {
-                categoriesCount: this.state.categories.length
-            });
-            
-        } catch (error) {
-            console.error('❌ Failed to initialize search page:', error);
-            this._handleInitializationError(error);
-        }
-    }
+// 工具函数 - 原main.js中的通用功能
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
 
-    /**
-     * 等待依赖项就绪
-     */
-    async _waitForDependencies() {
-        const maxWaitTime = 5000;
-        const startTime = Date.now();
+function formatCurrency(amount) {
+    if (!amount) return '$0.00';
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    }).format(amount);
+}
+
+// 修复日期显示问题 - 增强版日期格式化函数
+function formatDate(dateString) {
+    try {
+        // 处理不同格式的日期字符串
+        const date = new Date(dateString);
         
-        // 等待DOM就绪
-        if (document.readyState === 'loading') {
-            await new Promise(resolve => {
-                document.addEventListener('DOMContentLoaded', resolve);
-            });
+        // 检查日期是否有效
+        if (isNaN(date.getTime())) {
+            return 'Invalid Date';
         }
         
-        // 等待API就绪
-        while (!this.api && (Date.now() - startTime) < maxWaitTime) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-            this.api = window.charityEventsAPI;
-        }
-        
-        if (!this.api) {
-            throw new Error('API dependency not available');
-        }
-    }
-
-    /**
-     * 缓存DOM元素引用
-     */
-    _cacheElements() {
-        this.elements = {
-            // 表单元素
-            searchForm: DOMUtils.getElement('#search-form'),
-            dateFilter: DOMUtils.getElement('#date-filter'),
-            locationFilter: DOMUtils.getElement('#location-filter'),
-            categoryFilter: DOMUtils.getElement('#category-filter'),
-            searchButton: DOMUtils.getElement('#search-button'),
-            clearButton: DOMUtils.getElement('#clear-filters'),
-            
-            // 结果元素
-            resultsContainer: DOMUtils.getElement('#search-results'),
-            resultsSummary: DOMUtils.getElement('#results-summary'),
-            searchResults: DOMUtils.getElement('#search-results'),
-            noResults: DOMUtils.getElement('#no-results'),
-            
-            // 状态元素
-            searchLoading: DOMUtils.getElement('#search-loading'),
-            searchError: DOMUtils.getElement('#search-error'),
-            
-            // 控制元素
-            sortSelect: DOMUtils.getElement('#sort-select'),
-            viewToggle: DOMUtils.getElement('#view-toggle')
-        };
-
-        this._validateRequiredElements();
-    }
-
-    /**
-     * 验证必需元素
-     */
-    _validateRequiredElements() {
-        const requiredElements = [
-            'searchForm',
-            'resultsContainer',
-            'searchLoading',
-            'searchError',
-            'noResults'
-        ];
-        
-        const missingElements = requiredElements.filter(key => !this.elements[key]);
-        
-        if (missingElements.length > 0) {
-            console.warn('⚠️ Missing required elements:', missingElements);
-            this._createFallbackElements();
-        }
-    }
-
-    /**
-     * 创建备用元素
-     */
-    _createFallbackElements() {
-        if (!this.elements.searchForm) {
-            this.elements.searchForm = DOMUtils.createElement('form', {
-                'id': 'search-form',
-                'class': 'search-form',
-                'role': 'search'
-            });
-        }
-        
-        if (!this.elements.resultsContainer) {
-            this.elements.resultsContainer = DOMUtils.createElement('div', {
-                'id': 'search-results',
-                'class': 'events-grid',
-                'aria-live': 'polite'
-            });
-        }
-    }
-
-    /**
-     * 验证DOM结构
-     */
-    _validateDOMStructure() {
-        const requiredSections = ['search', 'results'];
-        const missingSections = [];
-        
-        if (!this.elements.searchForm) missingSections.push('search');
-        if (!this.elements.resultsContainer) missingSections.push('results');
-        
-        if (missingSections.length > 0) {
-            console.warn('⚠️ Missing page sections:', missingSections);
-        }
-    }
-
-    /**
-     * 设置事件监听器
-     */
-    _setupEventListeners() {
-        this._cleanupEventListeners();
-        
-        // 表单提交
-        if (this.elements.searchForm) {
-            this._addEventListener(this.elements.searchForm, 'submit', 
-                (e) => this._handleFormSubmit(e));
-        }
-        
-        // 筛选器变化
-        if (this.elements.dateFilter) {
-            this._addEventListener(this.elements.dateFilter, 'change', 
-                () => this._handleFilterChange());
-        }
-        
-        if (this.elements.locationFilter) {
-            const locationHandler = Utils.debounce(
-                () => this._handleFilterChange(), 
-                this.config.search.debounceDelay
-            );
-            this._addEventListener(this.elements.locationFilter, 'input', locationHandler);
-        }
-        
-        if (this.elements.categoryFilter) {
-            this._addEventListener(this.elements.categoryFilter, 'change', 
-                () => this._handleFilterChange());
-        }
-        
-        // 清除按钮
-        if (this.elements.clearButton) {
-            this._addEventListener(this.elements.clearButton, 'click', 
-                () => this._handleClearFilters());
-        }
-        
-        // 排序控制
-        if (this.elements.sortSelect) {
-            this._addEventListener(this.elements.sortSelect, 'change', 
-                (e) => this._handleSortChange(e));
-        }
-        
-        // 错误重试
-        const retryButton = DOMUtils.getElement('#search-retry');
-        if (retryButton) {
-            this._addEventListener(retryButton, 'click', 
-                () => this._handleRetrySearch());
-        }
-        
-        // 重置搜索
-        const resetSearch = DOMUtils.getElement('#reset-search');
-        if (resetSearch) {
-            this._addEventListener(resetSearch, 'click', 
-                () => this._handleResetSearch());
-        }
-        
-        console.log('🎯 Search page event listeners setup complete');
-    }
-
-    /**
-     * 清理事件监听器
-     */
-    _cleanupEventListeners() {
-        this.eventListeners.forEach(({ element, event, handler }) => {
-            element.removeEventListener(event, handler);
-        });
-        this.eventListeners = [];
-    }
-
-    /**
-     * 添加事件监听器
-     */
-    _addEventListener(element, event, handler) {
-        element.addEventListener(event, handler);
-        this.eventListeners.push({ element, event, handler });
-    }
-
-    /**
-     * 加载初始数据
-     */
-    async _loadInitialData() {
-        try {
-            console.log('📥 Loading initial data for search page...');
-            
-            this._showLoadingState();
-            
-            // 加载分类数据
-            const categories = await this.api.fetchCategories();
-            this.state.categories = categories;
-            
-            // 渲染分类筛选器
-            this._renderCategoryFilter();
-            
-            // 加载所有事件用于客户端搜索
-            const events = await this.api.fetchEvents();
-            this.state.events = events;
-            this.state.filteredEvents = events;
-            
-            this._hideLoadingState();
-            
-            console.log('✅ Initial data loaded', {
-                categories: categories.length,
-                events: events.length
-            });
-            
-        } catch (error) {
-            console.error('❌ Failed to load initial data:', error);
-            this._handleDataLoadError(error);
-        }
-    }
-
-    /**
-     * 显示加载状态
-     */
-    _showLoadingState() {
-        DOMUtils.hideElement(this.elements.searchError);
-        DOMUtils.hideElement(this.elements.noResults);
-        DOMUtils.hideElement(this.elements.resultsContainer);
-        
-        this.state.isLoading = true;
-    }
-
-    /**
-     * 隐藏加载状态
-     */
-    _hideLoadingState() {
-        this.state.isLoading = false;
-    }
-
-    /**
-     * 处理数据加载错误
-     */
-    _handleDataLoadError(error) {
-        this.state.isLoading = false;
-        this.state.hasError = true;
-        this.state.errorMessage = error.message;
-        
-        this._showErrorState();
-        ErrorHandler.handleApiError(error, 'search page data loading');
-    }
-
-    /**
-     * 显示错误状态
-     */
-    _showErrorState() {
-        DOMUtils.showElement(this.elements.searchError);
-        DOMUtils.hideElement(this.elements.noResults);
-        DOMUtils.hideElement(this.elements.resultsContainer);
-        
-        // 更新错误消息
-        const errorMessageElement = DOMUtils.getElement('#search-error-message');
-        if (errorMessageElement) {
-            const userFriendlyMessage = this._getUserFriendlyErrorMessage();
-            DOMUtils.setText(errorMessageElement, userFriendlyMessage);
-        }
-    }
-
-    /**
-     * 获取用户友好的错误消息
-     */
-    _getUserFriendlyErrorMessage() {
-        return 'We encountered an error while loading search data. Please try again.';
-    }
-
-    /**
-     * 渲染分类筛选器
-     */
-    _renderCategoryFilter() {
-        if (!this.elements.categoryFilter) return;
-        
-        const categories = this.state.categories;
-        
-        const optionsHTML = `
-            <option value="">All Categories</option>
-            ${categories.map(category => `
-                <option value="${category.id}">${Utils.escapeHtml(category.name)}</option>
-            `).join('')}
-        `;
-        
-        DOMUtils.setHTML(this.elements.categoryFilter, optionsHTML);
-    }
-
-    /**
-     * 设置搜索历史
-     */
-    _setupSearchHistory() {
-        this.searchHistory = StorageManager.getItem('search_history', []);
-        console.log('📚 Search history loaded:', this.searchHistory.length);
-    }
-
-    /**
-     * 保存搜索状态
-     */
-    _saveSearchState() {
-        const searchState = {
-            filters: this.state.currentFilters,
-            searchQuery: this.state.searchQuery,
-            sortBy: this.state.sortBy,
-            sortOrder: this.state.sortOrder
-        };
-        
-        StorageManager.setItem('search_state', searchState);
-    }
-
-    /**
-     * 恢复搜索状态
-     */
-    _restoreSearchState() {
-        const savedState = StorageManager.getItem('search_state');
-        
-        if (savedState) {
-            this.state.currentFilters = savedState.filters || {};
-            this.state.searchQuery = savedState.searchQuery || '';
-            this.state.sortBy = savedState.sortBy || 'relevance';
-            this.state.sortOrder = savedState.sortOrder || 'desc';
-            
-            // 恢复表单值
-            this._restoreFormValues();
-            
-            console.log('💾 Search state restored');
-        }
-    }
-
-    /**
-     * 恢复表单值
-     */
-    _restoreFormValues() {
-        if (this.elements.dateFilter && this.state.currentFilters.date) {
-            this.elements.dateFilter.value = this.state.currentFilters.date;
-        }
-        
-        if (this.elements.locationFilter && this.state.currentFilters.location) {
-            this.elements.locationFilter.value = this.state.currentFilters.location;
-        }
-        
-        if (this.elements.categoryFilter && this.state.currentFilters.category) {
-            this.elements.categoryFilter.value = this.state.currentFilters.category;
-        }
-    }
-
-    /**
-     * 处理表单提交
-     */
-    async _handleFormSubmit(event) {
-        event.preventDefault();
-        console.log('📤 Search form submitted');
-        
-        await this._performSearch();
-    }
-
-    /**
-     * 处理筛选器变化
-     */
-    async _handleFilterChange() {
-        console.log('🔄 Filters changed');
-        
-        // 更新状态
-        this._updateFiltersState();
-        
-        // 自动搜索（如果有活动筛选器）
-        if (this._hasActiveFilters()) {
-            await this._performSearch();
-        } else {
-            // 清除结果
-            this._clearResults();
-        }
-    }
-
-    /**
-     * 更新筛选器状态
-     */
-    _updateFiltersState() {
-        this.state.currentFilters = {
-            date: this.elements.dateFilter ? this.elements.dateFilter.value : '',
-            location: this.elements.locationFilter ? this.elements.locationFilter.value : '',
-            category: this.elements.categoryFilter ? this.elements.categoryFilter.value : ''
-        };
-        
-        this._saveSearchState();
-    }
-
-    /**
-     * 检查是否有活动筛选器
-     */
-    _hasActiveFilters() {
-        return Object.values(this.state.currentFilters).some(value => value && value.trim() !== '');
-    }
-
-    /**
-     * 执行搜索
-     */
-    async _performSearch() {
-        try {
-            console.log('🔍 Performing search...', this.state.currentFilters);
-            
-            this._showSearchLoading();
-            this.state.isSearching = true;
-            this.state.hasSearched = true;
-            
-            // 使用API搜索
-            const searchResults = await this.api.searchEvents(this.state.currentFilters);
-            
-            // 处理搜索结果
-            this.state.searchResults = searchResults;
-            this.state.filteredEvents = this._sortEvents(searchResults);
-            
-            this._hideSearchLoading();
-            this._renderSearchResults();
-            this._updateSearchHistory();
-            this._saveSearchState();
-            
-            console.log('✅ Search completed', {
-                results: searchResults.length,
-                filters: this.state.currentFilters
-            });
-            
-            this._dispatchEvent('search:performed', {
-                resultsCount: searchResults.length,
-                filters: this.state.currentFilters
-            });
-            
-        } catch (error) {
-            console.error('❌ Search failed:', error);
-            this._handleSearchError(error);
-        }
-    }
-
-    /**
-     * 显示搜索加载状态
-     */
-    _showSearchLoading() {
-        if (this.elements.searchLoading) {
-            DOMUtils.showElement(this.elements.searchLoading);
-        }
-        
-        if (this.elements.searchButton) {
-            const btnText = this.elements.searchButton.querySelector('.btn-text');
-            const btnLoading = this.elements.searchButton.querySelector('.btn-loading');
-            
-            if (btnText && btnLoading) {
-                DOMUtils.hideElement(btnText);
-                DOMUtils.showElement(btnLoading);
-            }
-        }
-        
-        DOMUtils.hideElement(this.elements.searchError);
-        DOMUtils.hideElement(this.elements.noResults);
-        DOMUtils.hideElement(this.elements.resultsContainer);
-    }
-
-    /**
-     * 隐藏搜索加载状态
-     */
-    _hideSearchLoading() {
-        this.state.isSearching = false;
-        
-        if (this.elements.searchLoading) {
-            DOMUtils.hideElement(this.elements.searchLoading);
-        }
-        
-        if (this.elements.searchButton) {
-            const btnText = this.elements.searchButton.querySelector('.btn-text');
-            const btnLoading = this.elements.searchButton.querySelector('.btn-loading');
-            
-            if (btnText && btnLoading) {
-                DOMUtils.showElement(btnText);
-                DOMUtils.hideElement(btnLoading);
-            }
-        }
-    }
-
-    /**
-     * 处理搜索错误
-     */
-    _handleSearchError(error) {
-        this.state.isSearching = false;
-        this.state.hasError = true;
-        this.state.errorMessage = error.message;
-        
-        this._hideSearchLoading();
-        this._showErrorState();
-        
-        ErrorHandler.handleApiError(error, 'event search');
-    }
-
-    /**
-     * 渲染搜索结果
-     */
-    _renderSearchResults() {
-        if (this.state.searchResults.length === 0) {
-            this._showNoResults();
-            return;
-        }
-        
-        this._renderResultsSummary();
-        this._renderEventsGrid();
-        
-        DOMUtils.hideElement(this.elements.searchError);
-        DOMUtils.hideElement(this.elements.noResults);
-        DOMUtils.showElement(this.elements.resultsContainer);
-    }
-
-    /**
-     * 显示无结果状态
-     */
-    _showNoResults() {
-        DOMUtils.hideElement(this.elements.searchError);
-        DOMUtils.showElement(this.elements.noResults);
-        DOMUtils.hideElement(this.elements.resultsContainer);
-        
-        // 更新无结果消息
-        const noResultsMessage = this._getNoResultsMessage();
-        const noResultsElement = DOMUtils.getElement('#no-results p');
-        if (noResultsElement) {
-            DOMUtils.setText(noResultsElement, noResultsMessage);
-        }
-    }
-
-    /**
-     * 获取无结果消息
-     */
-    _getNoResultsMessage() {
-        const activeFilters = this._getActiveFilterNames();
-        
-        if (activeFilters.length > 0) {
-            return `No events found matching your current filters: ${activeFilters.join(', ')}. Try adjusting your search criteria.`;
-        }
-        
-        return 'No events found matching your search criteria. Try adjusting your filters or search terms.';
-    }
-
-    /**
-     * 获取活动筛选器名称
-     */
-    _getActiveFilterNames() {
-        const activeFilters = [];
-        
-        if (this.state.currentFilters.date) {
-            activeFilters.push('date');
-        }
-        
-        if (this.state.currentFilters.location) {
-            activeFilters.push('location');
-        }
-        
-        if (this.state.currentFilters.category) {
-            const category = this.state.categories.find(cat => cat.id == this.state.currentFilters.category);
-            activeFilters.push(category ? category.name : 'category');
-        }
-        
-        return activeFilters;
-    }
-
-    /**
-     * 渲染结果摘要
-     */
-    _renderResultsSummary() {
-        if (!this.elements.resultsSummary) return;
-        
-        const resultsCount = this.state.searchResults.length;
-        const filterText = this._getFilterDescription();
-        
-        const summaryText = resultsCount === 1 
-            ? `1 event found${filterText}`
-            : `${resultsCount} events found${filterText}`;
-        
-        DOMUtils.setText(this.elements.resultsSummary, summaryText);
-    }
-
-    /**
-     * 获取筛选器描述
-     */
-    _getFilterDescription() {
-        const descriptions = [];
-        
-        if (this.state.currentFilters.date) {
-            const date = new Date(this.state.currentFilters.date);
-            descriptions.push(`on ${Utils.formatDate(date, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`);
-        }
-        
-        if (this.state.currentFilters.location) {
-            descriptions.push(`in ${this.state.currentFilters.location}`);
-        }
-        
-        if (this.state.currentFilters.category) {
-            const category = this.state.categories.find(cat => cat.id == this.state.currentFilters.category);
-            if (category) {
-                descriptions.push(`in ${category.name} category`);
-            }
-        }
-        
-        return descriptions.length > 0 ? ` ${descriptions.join(' ')}` : '';
-    }
-
-    /**
-     * 渲染事件网格
-     */
-    _renderEventsGrid() {
-        if (!this.elements.resultsContainer) return;
-        
-        const eventsHTML = this.state.filteredEvents.map((event, index) => 
-            this._renderEventCard(event, index)
-        ).join('');
-        
-        DOMUtils.setHTML(this.elements.resultsContainer, `
-            <div class="events-grid" role="list" aria-label="Search results">
-                ${eventsHTML}
-            </div>
-        `);
-        
-        // 添加动画
-        this._animateResultsAppearance();
-    }
-
-    /**
-     * 渲染事件卡片
-     */
-    _renderEventCard(event, index) {
-        const formattedDate = Utils.formatDate(event.date_time, {
+        return date.toLocaleDateString('en-US', {
             weekday: 'short',
             year: 'numeric',
             month: 'short',
@@ -762,431 +35,397 @@ class SearchPage {
             hour: '2-digit',
             minute: '2-digit'
         });
+    } catch (e) {
+        console.error('Error formatting date:', e, 'for date string:', dateString);
+        return 'Invalid Date';
+    }
+}
+
+function calculateProgress(current, total) {
+    if (!total || total === 0) return 0;
+    return Math.min(100, Math.round((current / total) * 100));
+}
+
+// 状态管理
+let categories = [];
+
+// 加载分类数据 - 修复下拉框不显示问题
+async function loadCategories() {
+    try {
+        console.log('📥 Loading categories...');
+        const response = await fetch('http://localhost:3000/api/categories');
         
-        const formattedPrice = Utils.formatCurrency(event.ticket_price);
-        const progressPercentage = Utils.calculateProgress(event.current_amount, event.goal_amount);
+        // 检查响应状态
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
-        return `
-            <div class="event-card" role="listitem" data-event-id="${event.id}" data-index="${index}">
+        const data = await response.json();
+        
+        if (data.success && data.data && data.data.length > 0) {
+            categories = data.data;
+            populateCategoryFilter();
+        } else {
+            // 如果API返回空数据，使用备用分类列表
+            console.warn('No categories from API, using fallback categories');
+            useFallbackCategories();
+        }
+    } catch (error) {
+        console.error('❌ Failed to load categories:', error);
+        // 加载失败时使用备用分类列表
+        useFallbackCategories();
+    }
+}
+
+// 备用分类数据 - 确保下拉框有内容
+function useFallbackCategories() {
+    categories = [
+        { id: 1, name: 'Fun Run' },
+        { id: 2, name: 'Gala Dinner' },
+        { id: 3, name: 'Silent Auction' },
+        { id: 4, name: 'Concert' },
+        { id: 5, name: 'Workshop' },
+        { id: 6, name: 'Sports Tournament' }
+    ];
+    populateCategoryFilter();
+}
+
+// 填充分类筛选器 - 修复下拉框不显示问题
+function populateCategoryFilter() {
+    const categoryFilter = document.getElementById('category-filter');
+    if (!categoryFilter) {
+        console.error('❌ Category filter element not found');
+        return;
+    }
+    
+    if (categories.length > 0) {
+        const optionsHTML = categories.map(category => 
+            `<option value="${category.id}">${escapeHtml(category.name)}</option>`
+        ).join('');
+        categoryFilter.innerHTML = '<option value="">All Categories</option>' + optionsHTML;
+    } else {
+        // 如果没有分类数据，显示提示
+        categoryFilter.innerHTML = '<option value="">No categories available</option>';
+        categoryFilter.disabled = true;
+    }
+}
+
+// 显示搜索结果
+function displaySearchResults(events, filters = {}) {
+    console.log('🎨 Displaying search results:', events);
+    
+    const container = document.getElementById('search-results');
+    const loading = document.getElementById('search-loading');
+    const error = document.getElementById('search-error');
+    const empty = document.getElementById('no-results');
+    const summary = document.getElementById('results-summary');
+    
+    // 隐藏其他状态
+    if (loading) loading.classList.add('hidden');
+    if (error) error.classList.add('hidden');
+    if (empty) empty.classList.add('hidden');
+    
+    // 更新结果摘要
+    if (summary) {
+        const filterText = getFilterDescription(filters);
+        const resultsCount = events.length;
+        const summaryText = resultsCount === 1 
+            ? `1 event found${filterText}`
+            : `${resultsCount} events found${filterText}`;
+        summary.textContent = summaryText;
+    }
+    
+    if (events.length === 0) {
+        if (empty) {
+            const message = getNoResultsMessage(filters);
+            document.getElementById('no-results-message').textContent = message;
+            empty.classList.remove('hidden');
+        }
+        return;
+    }
+    
+    // 显示结果容器
+    if (container) {
+        container.classList.remove('hidden');
+        
+        // 生成活动卡片HTML
+        const eventsHTML = events.map(event => `
+            <div class="event-card">
                 <div class="event-card-header">
-                    <span class="event-category" aria-label="Event category: ${event.category_name}">
-                        ${event.category_name}
-                    </span>
-                    <span class="event-price">${formattedPrice}</span>
+                    <span class="event-category">${escapeHtml(event.category_name || 'Uncategorized')}</span>
+                    <span class="event-price">${formatCurrency(event.ticket_price)}</span>
                 </div>
                 
-                <h3 class="event-title">${this._highlightSearchTerms(event.name)}</h3>
+                <h3 class="event-title">${escapeHtml(event.name)}</h3>
                 
                 <div class="event-meta">
-                    <div class="event-date" aria-label="Event date and time">
+                    <div class="event-date">
                         <span class="meta-icon">📅</span>
-                        <time datetime="${event.date_time.toISOString()}">${formattedDate}</time>
+                        <time>${formatDate(event.date_time)}</time>
                     </div>
                     
-                    <div class="event-location" aria-label="Event location">
+                    <div class="event-location">
                         <span class="meta-icon">📍</span>
-                        <span>${this._highlightSearchTerms(event.location)}</span>
+                        <span>${escapeHtml(event.location)}</span>
                     </div>
                 </div>
                 
-                <p class="event-description">${this._highlightSearchTerms(event.short_description)}</p>
+                <p class="event-description">${escapeHtml(event.short_description)}</p>
                 
                 ${event.goal_amount > 0 ? `
-                <div class="fundraising-progress" aria-label="Fundraising progress">
+                <div class="fundraising-progress">
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${progressPercentage}%"
-                             aria-valuenow="${progressPercentage}" 
-                             aria-valuemin="0" 
-                             aria-valuemax="100">
-                        </div>
+                        <div class="progress-fill" style="width: ${calculateProgress(event.current_amount, event.goal_amount)}%"></div>
                     </div>
                     <div class="progress-text">
-                        <span>${Utils.formatCurrency(event.current_amount)} raised</span>
-                        <span>${progressPercentage}%</span>
+                        <span>${formatCurrency(event.current_amount)} raised</span>
+                        <span>${calculateProgress(event.current_amount, event.goal_amount)}%</span>
                     </div>
                 </div>
                 ` : ''}
                 
                 <div class="event-actions">
-                    <button class="view-details-btn" 
-                            onclick="window.location.href='event.html?id=${event.id}'"
-                            aria-label="View details for ${Utils.escapeHtml(event.name)}">
+                    <button class="view-details-btn" onclick="window.location.href='event.html?id=${event.id}'">
                         View Details
                     </button>
                 </div>
             </div>
-        `;
+        `).join('');
+        
+        container.innerHTML = eventsHTML;
     }
+}
 
-    /**
-     * 高亮搜索术语
-     */
-    _highlightSearchTerms(text) {
-        if (!this.config.ui.highlightSearchTerms || !this.state.currentFilters.location) {
-            return Utils.escapeHtml(text);
-        }
-        
-        const searchTerm = this.state.currentFilters.location.toLowerCase();
-        const escapedText = Utils.escapeHtml(text);
-        
-        if (!text.toLowerCase().includes(searchTerm)) {
-            return escapedText;
-        }
-        
-        const regex = new RegExp(`(${this._escapeRegex(searchTerm)})`, 'gi');
-        return escapedText.replace(regex, '<mark class="search-highlight">$1</mark>');
+function getFilterDescription(filters) {
+    const descriptions = [];
+    
+    if (filters.date) {
+        const date = new Date(filters.date);
+        descriptions.push(`on ${date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`);
     }
-
-    /**
-     * 转义正则表达式字符
-     */
-    _escapeRegex(string) {
-        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    
+    if (filters.location) {
+        descriptions.push(`in ${filters.location}`);
     }
-
-    /**
-     * 动画显示结果
-     */
-    _animateResultsAppearance() {
-        const eventCards = DOMUtils.getElements('.event-card');
-        
-        eventCards.forEach((card, index) => {
-            card.style.animationDelay = `${index * 0.1}s`;
-            card.classList.add('animate-in');
-        });
-    }
-
-    /**
-     * 处理清除筛选器
-     */
-    _handleClearFilters() {
-        console.log('🧹 Clearing all filters');
-        
-        // 重置表单
-        if (this.elements.searchForm) {
-            this.elements.searchForm.reset();
-        }
-        
-        // 重置状态
-        this.state.currentFilters = {
-            date: '',
-            location: '',
-            category: ''
-        };
-        
-        this.state.searchResults = [];
-        this.state.hasSearched = false;
-        
-        // 清除结果
-        this._clearResults();
-        this._saveSearchState();
-        
-        this._dispatchEvent('search:filtersCleared');
-    }
-
-    /**
-     * 清除结果
-     */
-    _clearResults() {
-        DOMUtils.hideElement(this.elements.searchError);
-        DOMUtils.hideElement(this.elements.noResults);
-        DOMUtils.hideElement(this.elements.resultsContainer);
-        
-        if (this.elements.resultsSummary) {
-            DOMUtils.setText(this.elements.resultsSummary, '');
+    
+    if (filters.category) {
+        const category = categories.find(cat => cat.id == filters.category);
+        if (category) {
+            descriptions.push(`in ${category.name} category`);
         }
     }
+    
+    return descriptions.length > 0 ? ` ${descriptions.join(' ')}` : '';
+}
 
-    /**
-     * 处理排序变化
-     */
-    _handleSortChange(event) {
-        const [sortBy, sortOrder] = event.target.value.split('_');
-        
-        this.state.sortBy = sortBy;
-        this.state.sortOrder = sortOrder;
-        this.state.filteredEvents = this._sortEvents(this.state.searchResults);
-        this._renderEventsGrid();
-        
-        this._dispatchEvent('search:sorted', { sortBy, sortOrder });
+function getNoResultsMessage(filters) {
+    const activeFilters = [];
+    
+    if (filters.date) activeFilters.push('date');
+    if (filters.location) activeFilters.push('location');
+    if (filters.category) {
+        const category = categories.find(cat => cat.id == filters.category);
+        activeFilters.push(category ? category.name : 'category');
     }
+    
+    if (activeFilters.length > 0) {
+        return `No events found matching your current filters: ${activeFilters.join(', ')}. Try adjusting your search criteria.`;
+    }
+    
+    return 'No events found matching your search criteria. Try adjusting your filters or search terms.';
+}
 
-    /**
-     * 排序事件
-     */
-    _sortEvents(events) {
-        return [...events].sort((a, b) => {
-            let aValue, bValue;
+function showSearchLoading() {
+    const loading = document.getElementById('search-loading');
+    const error = document.getElementById('search-error');
+    const empty = document.getElementById('no-results');
+    const results = document.getElementById('search-results');
+    
+    if (loading) loading.classList.remove('hidden');
+    if (error) error.classList.add('hidden');
+    if (empty) empty.classList.add('hidden');
+    if (results) results.classList.add('hidden');
+}
+
+function showSearchError(error) {
+    const loading = document.getElementById('search-loading');
+    const errorDiv = document.getElementById('search-error');
+    
+    if (loading) loading.classList.add('hidden');
+    if (errorDiv) {
+        document.getElementById('search-error-message').textContent = 
+            error.message || 'We encountered an error while searching. Please try again.';
+        errorDiv.classList.remove('hidden');
+    }
+}
+
+// 搜索函数
+async function performSearch(filters = {}) {
+    console.log('🔍 Performing search with filters:', filters);
+    showSearchLoading();
+    
+    try {
+        // 方法1: 使用搜索端点
+        let url = 'http://localhost:3000/api/events/search';
+        const params = new URLSearchParams();
+        
+        if (filters.date) params.append('date', filters.date);
+        if (filters.location) params.append('location', filters.location);
+        if (filters.category) params.append('category', filters.category);
+        
+        const queryString = params.toString();
+        if (queryString) {
+            url += '?' + queryString;
+        }
+        
+        console.log('🌐 Searching:', url);
+        
+        const response = await fetch(url);
+        if (!response.ok) {
+            // 如果搜索端点失败，尝试备用方案
+            console.log('🔄 Search endpoint failed, trying client-side filtering');
+            throw new Error(`Search endpoint returned ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ Search results from API:', data);
+        
+        // 处理不同的响应格式
+        const events = data.data || data || [];
+        displaySearchResults(events, filters);
+        
+    } catch (error) {
+        console.error('❌ Search API failed, trying alternative method:', error);
+        
+        // 备用方案：获取所有事件然后在客户端筛选
+        try {
+            await performClientSideSearch(filters);
+        } catch (fallbackError) {
+            console.error('❌ Fallback search also failed:', fallbackError);
+            showSearchError(error);
+        }
+    }
+}
+
+// 备用方案：客户端搜索
+async function performClientSideSearch(filters = {}) {
+    console.log('🔄 Using client-side search as fallback');
+    
+    try {
+        // 获取所有事件
+        const response = await fetch('http://localhost:3000/api/events');
+        if (!response.ok) {
+            throw new Error(`Failed to fetch events: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        const allEvents = data.data || data || [];
+        
+        console.log('📊 Total events for client-side filtering:', allEvents.length);
+        
+        // 在客户端进行筛选
+        let filteredEvents = allEvents.filter(event => {
+            let matches = true;
             
-            switch (this.state.sortBy) {
-                case 'name':
-                    aValue = a.name.toLowerCase();
-                    bValue = b.name.toLowerCase();
-                    break;
-                case 'date':
-                    aValue = a.date_time;
-                    bValue = b.date_time;
-                    break;
-                case 'price':
-                    aValue = a.ticket_price;
-                    bValue = b.ticket_price;
-                    break;
-                case 'location':
-                    aValue = a.location.toLowerCase();
-                    bValue = b.location.toLowerCase();
-                    break;
-                case 'relevance':
-                default:
-                    // 默认按日期排序
-                    aValue = a.date_time;
-                    bValue = b.date_time;
-                    break;
+            // 日期筛选
+            if (filters.date) {
+                const eventDate = new Date(event.date_time).toISOString().split('T')[0];
+                matches = matches && (eventDate === filters.date);
             }
             
-            if (this.state.sortOrder === 'desc') {
-                [aValue, bValue] = [bValue, aValue];
+            // 地点筛选
+            if (filters.location) {
+                const searchLocation = filters.location.toLowerCase();
+                const eventLocation = event.location.toLowerCase();
+                const eventName = event.name.toLowerCase();
+                matches = matches && (
+                    eventLocation.includes(searchLocation) || 
+                    eventName.includes(searchLocation)
+                );
             }
             
-            if (aValue < bValue) return -1;
-            if (aValue > bValue) return 1;
-            return 0;
-        });
-    }
-
-    /**
-     * 处理重试搜索
-     */
-    async _handleRetrySearch() {
-        console.log('🔄 Retrying search...');
-        await this._performSearch();
-    }
-
-    /**
-     * 处理重置搜索
-     */
-    _handleResetSearch() {
-        this._handleClearFilters();
-    }
-
-    /**
-     * 更新搜索历史
-     */
-    _updateSearchHistory() {
-        const searchEntry = {
-            filters: { ...this.state.currentFilters },
-            resultsCount: this.state.searchResults.length,
-            timestamp: new Date().toISOString()
-        };
-        
-        // 添加到历史
-        this.searchHistory.unshift(searchEntry);
-        
-        // 保持历史长度
-        if (this.searchHistory.length > 10) {
-            this.searchHistory = this.searchHistory.slice(0, 10);
-        }
-        
-        // 保存到本地存储
-        StorageManager.setItem('search_history', this.searchHistory);
-    }
-
-    /**
-     * 处理初始化错误
-     */
-    _handleInitializationError(error) {
-        console.error('❌ Search page initialization failed:', error);
-        
-        if (this.elements.resultsContainer) {
-            DOMUtils.setHTML(this.elements.resultsContainer, `
-                <div class="error-state">
-                    <div class="error-icon">⚠️</div>
-                    <h3>Page Loading Error</h3>
-                    <p>We're having trouble loading the search page. Please try refreshing.</p>
-                    <button onclick="window.location.reload()" class="btn btn-primary">
-                        Refresh Page
-                    </button>
-                </div>
-            `);
-        }
-        
-        ErrorHandler.handleApiError(error, 'search page initialization');
-    }
-
-    /**
-     * 分发自定义事件
-     */
-    _dispatchEvent(eventName, detail = {}) {
-        const event = new CustomEvent(eventName, {
-            detail: {
-                timestamp: new Date().toISOString(),
-                source: 'SearchPage',
-                ...detail
-            },
-            bubbles: true,
-            cancelable: true
+            // 分类筛选
+            if (filters.category) {
+                matches = matches && (event.category_id == filters.category);
+            }
+            
+            return matches;
         });
         
-        document.dispatchEvent(event);
-    }
-
-    /**
-     * 获取页面状态
-     */
-    getState() {
-        return {
-            ...this.state,
-            config: { ...this.config },
-            searchHistory: [...this.searchHistory]
-        };
-    }
-
-    /**
-     * 手动执行搜索
-     */
-    async search(filters = {}) {
-        this.state.currentFilters = { ...this.state.currentFilters, ...filters };
-        await this._performSearch();
-    }
-
-    /**
-     * 销毁实例
-     */
-    destroy() {
-        this._cleanupEventListeners();
-        console.log('🧹 SearchPage destroyed');
+        console.log('✅ Client-side filtered events:', filteredEvents.length);
+        displaySearchResults(filteredEvents, filters);
+        
+    } catch (error) {
+        throw new Error(`Client-side search failed: ${error.message}`);
     }
 }
 
-// 搜索页特定样式
-const searchPageStyles = `
-/* 搜索页特定样式 */
-.search-highlight {
-    background-color: #fff3cd;
-    padding: 0.1em 0.2em;
-    border-radius: var(--radius-sm);
-    font-weight: var(--font-bold);
+// 清除筛选器
+function clearFilters() {
+    document.getElementById('search-form').reset();
+    document.getElementById('search-results').classList.add('hidden');
+    document.getElementById('results-summary').textContent = '';
+    document.getElementById('no-results').classList.add('hidden');
+    document.getElementById('search-error').classList.add('hidden');
 }
 
-.search-form {
-    background: var(--white);
-    border-radius: var(--radius-xl);
-    padding: var(--space-6);
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--gray-200);
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--space-6);
-    margin-bottom: var(--space-6);
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-label {
-    font-weight: var(--font-semibold);
-    color: var(--gray-700);
-    margin-bottom: var(--space-2);
-    font-size: var(--text-sm);
-}
-
-.form-input, .form-select {
-    padding: var(--space-3) var(--space-4);
-    border: 2px solid var(--gray-300);
-    border-radius: var(--radius-lg);
-    font-size: var(--text-base);
-    transition: all var(--transition-fast);
-    background-color: var(--white);
-}
-
-.form-input:focus, .form-select:focus {
-    outline: none;
-    border-color: var(--primary-light);
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-}
-
-.form-actions {
-    display: flex;
-    gap: var(--space-4);
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.results-summary {
-    font-size: var(--text-lg);
-    color: var(--gray-600);
-    background: var(--white);
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--gray-200);
-}
-
-/* 加载状态 */
-#search-loading {
-    text-align: center;
-    padding: var(--space-8);
-}
-
-.btn-loading {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-}
-
-.btn-loading::after {
-    content: '';
-    width: 12px;
-    height: 12px;
-    border: 2px solid transparent;
-    border-top: 2px solid currentColor;
-    border-radius: var(--radius-full);
-    animation: spin 1s linear infinite;
-}
-
-/* 响应式设计 */
-@media (max-width: 767px) {
-    .form-grid {
-        grid-template-columns: 1fr;
-        gap: var(--space-4);
-    }
+// 页面加载完成后执行
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔍 Search page loaded');
     
-    .form-actions {
-        flex-direction: column;
-    }
+    // 检查必要的DOM元素是否存在
+    const requiredElements = [
+        'date-filter', 
+        'category-filter',
+        'search-form',
+        'search-results'
+    ];
     
-    .form-actions .btn {
-        width: 100%;
-    }
-    
-    .results-summary {
-        font-size: var(--text-base);
-        text-align: center;
-    }
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-`;
-
-// 注入搜索页样式
-const searchStyleElement = DOMUtils.createElement('style');
-DOMUtils.setText(searchStyleElement, searchPageStyles);
-document.head.appendChild(searchStyleElement);
-
-// 创建全局搜索页实例
-window.searchPage = new SearchPage();
-
-// 自动初始化
-document.addEventListener('DOMContentLoaded', () => {
-    window.searchPage.init().catch(error => {
-        console.error('❌ Failed to initialize search page:', error);
+    requiredElements.forEach(id => {
+        if (!document.getElementById(id)) {
+            console.error(`❌ Required element with ID "${id}" not found`);
+        }
     });
+    
+    // 加载分类数据
+    loadCategories();
+    
+    // 设置事件监听器
+    const searchForm = document.getElementById('search-form');
+    const clearButton = document.getElementById('clear-filters');
+    const retryButton = document.getElementById('search-retry');
+    const resetButton = document.getElementById('reset-search');
+    
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const filters = {
+                date: document.getElementById('date-filter').value,
+                location: document.getElementById('location-filter').value,
+                category: document.getElementById('category-filter').value
+            };
+            
+            performSearch(filters);
+        });
+    }
+    
+    if (clearButton) {
+        clearButton.addEventListener('click', clearFilters);
+    }
+    
+    if (retryButton) {
+        retryButton.addEventListener('click', function() {
+            const filters = {
+                date: document.getElementById('date-filter').value,
+                location: document.getElementById('location-filter').value,
+                category: document.getElementById('category-filter').value
+            };
+            performSearch(filters);
+        });
+    }
+    
+    if (resetButton) {
+        resetButton.addEventListener('click', clearFilters);
+    }
 });
-
-console.log('🔍 Search page module loaded');

@@ -7,7 +7,13 @@ const app = express();
 const PORT = process.env.API_PORT || 3000;
 
 // 基础中间件
-app.use(cors());
+// 修复CORS配置
+app.use(cors({
+    origin: 'http://localhost:8080', // 明确指定客户端地址
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
 app.use(express.json());
 
 // 创建数据库连接
