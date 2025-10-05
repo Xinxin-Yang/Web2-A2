@@ -391,3 +391,231 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// 在文件末尾添加以下代码，在DOMContentLoaded事件内部
+class CustomDatePicker {
+    constructor() {
+        this.currentDate = new Date();
+        this.selectedDate = null;
+        this.modal = document.getElementById('date-picker-modal');
+        this.dateInput = document.getElementById('date-filter');
+        this.init();
+    }
+
+    init() {
+        this.bindEvents();
+        this.renderCalendar();
+    }
+
+    bindEvents() {
+        // 日期输入框点击事件
+        this.dateInput.addEventListener('click', () => this.openModal());
+        
+        // 日期选择器切换按钮
+        document.querySelector('.date-picker-toggle').addEventListener('click', () => this.openModal());
+        
+        // 模态框关闭事件
+        document.querySelector('.modal-close').addEventListener('click', () => this.closeModal());
+        document.querySelector('.modal-overlay').addEventListener('click', () => this.closeModal());
+        
+        // 月份导航
+        document.querySelector('.prev-month').addEventListener('click', () => this.previousMonth());
+        document.querySelector('.next-month').addEventListener('click', () => this.nextMonth());
+        
+        // 操作按钮
+        document.getElementById('clear-date').addEventListener('click', () => this.clearDate());
+        document.getElementById('today-date').addEventListener('click', () => this.selectToday());
+        document.getElementById('confirm-date').addEventListener('click', () => this.confirmDate());
+        
+        // ESC键关闭
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !this.modal.classList.contains('hidden')) {
+                this.closeModal();
+            }
+        });
+    }
+
+    openModal() {
+        this.modal.classList.remove('hidden');
+        this.renderCalendar();
+    }
+
+    closeModal() {
+        this.modal.classList.add('hidden');
+    }
+
+    previousMonth() {
+        this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+        this.renderCalendar();
+    }
+
+    nextMonth() {
+        this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+        this.renderCalendar();
+    }
+
+    selectToday() {
+        const today = new Date();
+        // 使用UTC日期
+        this.selectedDate = new Date(Date.UTC(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+        ));
+        this.renderCalendar();
+    }
+
+    clearDate() {
+        this.selectedDate = null;
+        this.dateInput.value = '';
+        this.renderCalendar();
+    }
+
+    confirmDate() {
+        if (this.selectedDate) {
+            // 使用UTC日期来格式化，避免时区转换
+            const year = this.selectedDate.getUTCFullYear();
+            const month = String(this.selectedDate.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(this.selectedDate.getUTCDate()).padStart(2, '0');
+            const formattedDate = `${year}-${month}-${day}`;
+            
+            this.dateInput.value = formattedDate;
+        }
+        this.closeModal();
+    }
+
+    selectDate(day) {
+        // 使用UTC时间避免时区问题
+        const year = this.currentDate.getFullYear();
+        const month = this.currentDate.getMonth();
+        
+        // 创建UTC日期对象
+        this.selectedDate = new Date(Date.UTC(year, month, day));
+        this.renderCalendar();
+    }
+
+    renderCalendar() {
+        const monthNames = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        // 更新月份年份显示
+        document.getElementById('current-month').textContent = monthNames[this.currentDate.getMonth()];
+        document.getElementById('current-year').textContent = this.currentDate.getFullYear();
+
+        const daysContainer = document.getElementById('date-picker-days');
+        daysContainer.innerHTML = '';
+
+        const year = this.currentDate.getFullYear();
+        const month = this.currentDate.getMonth();
+
+        // 获取当月第一天和最后一天
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+
+        // 获取当月第一天是星期几 (0 = Sunday, 6 = Saturday)
+        const firstDayIndex = firstDay.getDay();
+
+        // 添加上个月的日期
+        const prevMonthLastDay = new Date(year, month, 0).getDate();
+        for (let i = firstDayIndex - 1; i >= 0; i--) {
+            const dayElement = document.createElement('button');
+            dayElement.className = 'date-picker-day other-month disabled';
+            dayElement.textContent = prevMonthLastDay - i;
+            dayElement.disabled = true;
+            daysContainer.appendChild(dayElement);
+        }
+
+        // 添加当月的日期
+        const today = new Date();
+        const todayUTC = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+        
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement('button');
+            dayElement.className = 'date-picker-day';
+            dayElement.textContent = day;
+
+            // 使用UTC日期进行比较
+            const currentDate = new Date(Date.UTC(year, month, day));
+            
+            // 检查是否是今天（使用UTC日期）
+            if (currentDate.getTime() === todayUTC.getTime()) {
+                dayElement.classList.add('today');
+            }
+
+            // 检查是否是选中的日期（使用UTC日期）
+            if (this.selectedDate && currentDate.getTime() === this.selectedDate.getTime()) {
+                dayElement.classList.add('selected');
+            }
+
+            // 所有日期都可以点击
+            dayElement.addEventListener('click', () => this.selectDate(day));
+
+            daysContainer.appendChild(dayElement);
+        }
+
+        // 添加下个月的日期以填满网格
+        const totalCells = 42; // 6行 × 7天
+        const remainingCells = totalCells - (firstDayIndex + daysInMonth);
+        for (let day = 1; day <= remainingCells; day++) {
+            const dayElement = document.createElement('button');
+            dayElement.className = 'date-picker-day other-month disabled';
+            dayElement.textContent = day;
+            dayElement.disabled = true;
+            daysContainer.appendChild(dayElement);
+        }
+    }
+
+
+}
+
+// 在DOMContentLoaded事件中初始化日期选择器
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔍 Search page loaded');
+    
+    // 加载分类数据
+    loadCategories();
+    
+    // 初始化自定义日期选择器
+    new CustomDatePicker();
+    
+    // ... 其他现有的事件监听器代码保持不变
+    const searchForm = document.getElementById('search-form');
+    const clearButton = document.getElementById('clear-filters');
+    const retryButton = document.getElementById('search-retry');
+    const resetButton = document.getElementById('reset-search');
+    
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const filters = {
+                date: document.getElementById('date-filter').value,
+                location: document.getElementById('location-filter').value,
+                category: document.getElementById('category-filter').value
+            };
+            
+            performSearch(filters);
+        });
+    }
+    
+    if (clearButton) {
+        clearButton.addEventListener('click', clearFilters);
+    }
+    
+    if (retryButton) {
+        retryButton.addEventListener('click', function() {
+            const filters = {
+                date: document.getElementById('date-filter').value,
+                location: document.getElementById('location-filter').value,
+                category: document.getElementById('category-filter').value
+            };
+            performSearch(filters);
+        });
+    }
+    
+    if (resetButton) {
+        resetButton.addEventListener('click', clearFilters);
+    }
+});

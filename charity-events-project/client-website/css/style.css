@@ -1037,206 +1037,206 @@ input, select, textarea {
     border: 1px solid #e9ecef;
 }
         
-        /* 活动卡片增强样式 */
-        .events-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem;
-        }
-        
-        .event-card {
-            background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            border: 1px solid #f1f3f4;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .event-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-        }
-        
-        .event-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-        }
-        
-        .event-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-        
-        .event-category {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 0.375rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        
-        .event-price {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #27ae60;
-        }
-        
-        .event-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 1rem;
-            line-height: 1.4;
-        }
-        
-        .event-meta {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .event-date, .event-location {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #6c757d;
-            font-size: 0.875rem;
-        }
-        
-        .meta-icon {
-            width: 16px;
-            text-align: center;
-        }
-        
-        .event-description {
-            color: #6c757d;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-            /* 兼容所有浏览器的 line-clamp */
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            
-            /* 标准属性（未来支持） */
-            line-clamp: 3;
-            display: box;
-            box-orient: vertical;
-        }
-        
-        .fundraising-progress {
-            margin: 1.5rem 0;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 0.5rem;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #27ae60, #2ecc71);
-            border-radius: 10px;
-            transition: width 0.5s ease;
-        }
-        
-        .progress-text {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            color: #6c757d;
-            font-weight: 600;
-        }
-        
-        .event-actions {
-            margin-top: 1.5rem;
-        }
-        
-        .view-details-btn {
-            width: 100%;
-            padding: 0.875rem 1.5rem;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .view-details-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-        
-        /* 状态样式 */
-        .loading-state, .error-state, .empty-state {
-            text-align: center;
-            padding: 3rem 2rem;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        }
-        
-        .error-icon, .empty-icon {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .search-section {
-                padding: 2rem 0;
-            }
-            
-            .search-header .section-title {
-                font-size: 2rem;
-            }
-            
-            .search-form {
-                padding: 1.5rem;
-                margin: 0 1rem;
-            }
-            
-            .form-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            
-            .form-actions {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .results-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .events-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+/* 活动卡片增强样式 */
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.event-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #f1f3f4;
+    position: relative;
+    overflow: hidden;
+}
+
+.event-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.event-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.event-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.event-category {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.event-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #27ae60;
+}
+
+.event-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.event-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.event-date, .event-location {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.meta-icon {
+    width: 16px;
+    text-align: center;
+}
+
+.event-description {
+    color: #6c757d;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    /* 兼容所有浏览器的 line-clamp */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    
+    /* 标准属性（未来支持） */
+    line-clamp: 3;
+    display: box;
+    box-orient: vertical;
+}
+
+.fundraising-progress {
+    margin: 1.5rem 0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #27ae60, #2ecc71);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.event-actions {
+    margin-top: 1.5rem;
+}
+
+.view-details-btn {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.view-details-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* 状态样式 */
+.loading-state, .error-state, .empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.error-icon, .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .search-section {
+        padding: 2rem 0;
+    }
+    
+    .search-header .section-title {
+        font-size: 2rem;
+    }
+    
+    .search-form {
+        padding: 1.5rem;
+        margin: 0 1rem;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .results-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .events-grid {
+        grid-template-columns: 1fr;
+    }
+}
 
 
 /* ===== 活动详情组件 ===== */
@@ -1475,3 +1475,231 @@ input, select, textarea {
     color: var(--white);
     text-decoration: underline;
 }
+
+/* 自定义日期选择器样式 */
+.custom-date-container {
+    position: relative;
+}
+
+.date-input {
+    padding-right: 3rem;
+    cursor: pointer;
+    background-color: white;
+}
+
+.date-picker-toggle {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.date-picker-toggle:hover {
+    background-color: var(--gray-100);
+}
+
+/* 日期选择器模态框 */
+.date-picker {
+    padding: 1rem;
+}
+
+.date-picker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding: 0 0.5rem;
+}
+
+.current-month-year {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    display: flex;
+    gap: 0.5rem;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    color: var(--gray-600);
+}
+
+.nav-btn:hover {
+    background-color: var(--gray-100);
+    color: var(--primary-color);
+}
+
+.date-picker-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--gray-600);
+}
+
+.date-picker-weekdays div {
+    padding: 0.5rem;
+}
+
+.date-picker-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+}
+
+.date-picker-day {
+    padding: 0.75rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.date-picker-day:hover:not(.disabled):not(.selected) {
+    background-color: var(--gray-100);
+}
+
+.date-picker-day.selected {
+    background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+    color: white;
+    font-weight: 600;
+}
+
+.date-picker-day.today {
+    background-color: var(--accent-color);
+    color: white;
+    font-weight: 600;
+}
+
+.date-picker-day.disabled {
+    color: var(--gray-400);
+    cursor: not-allowed;
+    background-color: var(--gray-100);
+}
+
+.date-picker-day.other-month {
+    color: var(--gray-400);
+}
+
+.date-picker-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+.date-picker-actions .btn {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+
+
+/* 模态框样式增强 */
+.modal-content {
+    max-width: 400px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 1.5rem 0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    color: var(--gray-600);
+}
+
+.modal-close:hover {
+    background-color: var(--gray-100);
+    color: var(--gray-800);
+}
+
+
+/* 主页文档上下居中 */
+.organization-info {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: var(--space-12) 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 水平居中 */
+    min-height: 400px;
+}
+
+.organization-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-light), var(--secondary-color));
+}
+
+.mission-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-12);
+    align-items: center;
+    justify-items: center; /* 网格项水平居中 */
+    width: 100%;
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+}
+
+.mission-text {
+    font-size: var(--text-lg);
+    line-height: var(--leading-relaxed);
+    text-align: left; /* 保持文本左对齐 */
+}
+
+.mission-text p {
+    margin-bottom: var(--space-6);
+}
+
+.mission-stats {
+    display: grid;
+    gap: var(--space-6);
+    padding: var(--space-6);
+    background: var(--gray-50);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--gray-200);
+    height: fit-content; /* 高度自适应内容 */
+}
+
