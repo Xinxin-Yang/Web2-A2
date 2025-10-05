@@ -89,7 +89,7 @@ function displayEvents(events) {
             return `
                 <div class="event-card">
                     <div class="event-image ${eventType}" aria-label="${event.category_name} event">
-                        <div style="font-size: 48px; margin-bottom: 8px;">${eventIcon}</div>
+                        <div class="event-icon-container">${eventIcon}</div> <!-- 新增类 event-icon-container -->
                         <div>${escapeHtml(event.category_name)}</div>
                     </div>
                     <div class="event-card-content">
@@ -127,7 +127,7 @@ function displayEvents(events) {
                         ` : ''}
                         
                         <div class="event-actions">
-                            <button class="view-details-btn" onclick="window.location.href='event.html?id=${event.id}'">
+                            <button class="view-details-btn"  data-event-id="${event.id}">
                                 View Details
                             </button>
                         </div>
@@ -137,6 +137,15 @@ function displayEvents(events) {
         }).join('');
         
         container.innerHTML = eventsHTML;
+        // 新增：绑定 View Details 按钮的点击事件
+        container.querySelectorAll('.view-details-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // 从 data 属性获取事件 ID
+            const eventId = this.dataset.eventId;
+            // 跳转到详情页（路径需匹配 server.js 配置的路由）
+            window.location.href = `/event?id=${eventId}`;
+            });
+        });
     }
 }
 

@@ -1703,3 +1703,32 @@ input, select, textarea {
     height: fit-content; /* 高度自适应内容 */
 }
 
+/* 1. 事件图标样式（替代内联 font-size 和 margin） */
+.event-icon-container {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+/* 2. 筹款进度条容器样式 */
+.fundraising-progress .progress-bar {
+  height: 8px; /* 可根据需求调整高度 */
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* 3. 进度条填充样式（用 CSS 变量接收动态宽度） */
+.fundraising-progress .progress-fill {
+  height: 100%;
+  background-color: #28a745; /* 进度条颜色，可调整 */
+  width: var(--progress-width, 0%); /* 变量默认值为 0% */
+}
+
+.progress-fill {
+  width: 0%;
+  transition: width 1s ease-in-out;
+}
+
+.progress-fill {
+  width: var(--progress-width, 0%);
+}

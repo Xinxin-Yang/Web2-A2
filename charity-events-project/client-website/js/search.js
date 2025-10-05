@@ -160,7 +160,7 @@ function displaySearchResults(events, filters = {}) {
                 ` : ''}
                 
                 <div class="event-actions">
-                    <button class="view-details-btn" onclick="window.location.href='event.html?id=${event.id}'">
+                    <button class="view-details-btn" data-event-id="${event.id}">
                         View Details
                     </button>
                 </div>
@@ -168,6 +168,15 @@ function displaySearchResults(events, filters = {}) {
         `).join('');
         
         container.innerHTML = eventsHTML;
+        // 新增：绑定 View Details 按钮的点击事件
+        container.querySelectorAll('.view-details-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // 从 data 属性获取事件 ID
+            const eventId = this.dataset.eventId;
+            // 跳转到详情页（路径需匹配 server.js 配置的路由）
+            window.location.href = `/event?id=${eventId}`;
+            });
+        });
     }
 }
 

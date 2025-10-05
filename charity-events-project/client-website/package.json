@@ -23,6 +23,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Xinxin-Yang/Web2-A2"
+    "url": "git+https://github.com/Xinxin-Yang/Web2-A2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Xinxin-Yang/Web2-A2/issues"
+  },
+  "homepage": "https://github.com/Xinxin-Yang/Web2-A2#readme",
+  "dependencies": {
+    "express": "^5.1.0"
   }
 }

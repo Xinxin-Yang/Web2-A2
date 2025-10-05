@@ -126,7 +126,7 @@ function displayEventDetails(event) {
                              aria-valuenow="${progressPercentage}" 
                              aria-valuemin="0" 
                              aria-valuemax="100">
-                            <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                            <div class="progress-fill" data-progress="${progressPercentage}"></div>
                         </div>
                         <div class="progress-text">
                             <span>${formatCurrency(event.current_amount)} raised</span>
@@ -152,6 +152,13 @@ function displayEventDetails(event) {
         if (registerButton) {
             registerButton.addEventListener('click', openModal);
         }
+
+        const progressFill = document.querySelector('.progress-fill');
+        if (progressFill) {
+            const progress = progressFill.getAttribute('data-progress');
+            // 使用CSS变量设置宽度
+            progressFill.style.setProperty('--progress-width', `${progress}%`);
+            }
     }
 }
 
@@ -244,3 +251,4 @@ document.addEventListener('DOMContentLoaded', function() {
         showEventError('Invalid event ID provided in URL');
     }
 });
+
